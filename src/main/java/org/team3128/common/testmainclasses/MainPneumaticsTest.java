@@ -1,4 +1,4 @@
-package org.team3128.testmainclasses;
+package org.team3128.common.testmainclasses;
 
 import org.team3128.common.NarwhalRobot;
 import org.team3128.common.hardware.misc.Piston;

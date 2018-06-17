@@ -6,7 +6,7 @@ plugins {
 }
 
 def TEAM = 3128
-def ROBOT_CLASS = "frc.team3128.gradletest.MainGradleTest"
+def ROBOT_CLASS = "org.team3128.gradletest.main.MainGradleTest"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project EmbeddedTools.

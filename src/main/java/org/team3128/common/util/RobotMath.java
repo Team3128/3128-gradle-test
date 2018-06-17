@@ -437,7 +437,8 @@ public class RobotMath {
 	 *     
 	 * @param x
 	 * @param coefficients - The array of coefficients, in the form {a_(n-1), a_(n-2), ... , a_(1), a_(0)}
-	 * @return
+	 * 
+	 * @return f(x)
 	 */
 	public static double polynomial(double x, double... coefficients) {
 		double result = 0;

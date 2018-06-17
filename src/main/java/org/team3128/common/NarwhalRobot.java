@@ -127,7 +127,7 @@ public abstract class NarwhalRobot extends RobotBase
 
         // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         
-        Log.info("NarwhalRobot", "Welcome to the FRC Team 3128 Common Library version 3.2b!");
+        Log.info("NarwhalRobot", "Welcome to the FRC Team 3128 Common Library version 4.0!");
         Log.info("NarwhalRobot", "Initializing Base Robot...");
 	    
         Assert.setRobot(this);
@@ -307,7 +307,7 @@ public abstract class NarwhalRobot extends RobotBase
 	 */
 	protected void fail()
 	{
-		Log.fatal("NarwhalRobot", "Critical error.  Robot exiting.");
+		Log.fatal("NarwhalRobot", "Critical error. Robot exiting.");
 
 		//give the failure message time to get to the driver station
 		try
