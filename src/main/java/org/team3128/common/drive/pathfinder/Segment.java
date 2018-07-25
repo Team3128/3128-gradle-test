@@ -10,6 +10,8 @@ import org.team3128.common.util.RobotMath;
  *
  */
 public class Segment {
+	private Waypoint first, second;
+
 	private double x0, x1;
 	private double x0p, x1p;
 	
@@ -19,12 +21,15 @@ public class Segment {
 	private double ax, bx, cx;
 	private double ay, by, cy;
 	
-	public Segment(Waypoint first, Waypoint second, double smoothness) {		
+	public Segment(Waypoint first, Waypoint second, double smoothness) {	
+		this.first = first;
+		this.second = second;
+		
 		x0 = first.x;
 		x1 = second.x;
 		
 		x0p = smoothness * RobotMath.cos(first.angle);
-		x1p = smoothness * RobotMath.cos((second.angle));
+		x1p = smoothness * RobotMath.cos(second.angle);
 		
 		ax = 0.5 * (-12 * x0 -  6 * x0p + 12 * x1 -  6 * x1p);
 		bx = 0.5 * ( 30 * x0 + 16 * x0p - 30 * x1 + 14 * x1p + 1);
@@ -40,6 +45,14 @@ public class Segment {
 		ay = 0.5 * (-12 * y0 -  6 * y0p + 12 * y1 -  6 * y1p);
 		by = 0.5 * ( 30 * y0 + 16 * y0p - 30 * y1 + 14 * y1p + 1);
 		cy = 0.5 * (-20 * y0 - 12 * y0p + 20 * y1 -  8 * y1p - 2);
+	}
+
+	public Waypoint getStart() {
+		return first;
+	}
+
+	public Waypoint getEnd() {
+		return second;
 	}
 	
 	public double getX(double s) {

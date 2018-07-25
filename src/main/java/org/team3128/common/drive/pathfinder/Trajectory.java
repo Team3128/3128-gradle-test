@@ -16,4 +16,18 @@ public class Trajectory {
     public Segment[] getSegments() {
         return segments;
     }
+
+    public Waypoint getStart() {
+        return segments[0].getStart();
+    }
+
+    public String toString() {
+        String result = "";
+
+        for (Segment segment:segments) {
+            result += segment + "\n";
+        }
+
+        return result;
+    }
 }

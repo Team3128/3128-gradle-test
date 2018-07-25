@@ -1,5 +1,8 @@
 package org.team3128.common.drive;
 
+import org.team3128.common.drive.pathfinder.Pathfinder;
+import org.team3128.common.drive.pathfinder.ProfilePoint;
+import org.team3128.common.drive.pathfinder.Trajectory;
 import org.team3128.common.hardware.misc.TwoSpeedGearshift;
 import org.team3128.common.util.Assert;
 import org.team3128.common.util.Constants;
@@ -10,10 +13,14 @@ import org.team3128.common.util.units.Angle;
 import org.team3128.common.util.units.AngularSpeed;
 import org.team3128.common.util.units.Length;
 
+import java.util.List;
+
+import com.ctre.phoenix.motion.MotionProfileStatus;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -89,10 +96,10 @@ public class SRXTankDrive implements ITankDrive
 	private boolean leftInverted, rightInverted;
 
 	/**
-	 * Measured free speed in native units per 100ms of the robot at 100%
-	 * throttle
+	 * The maxiumum measured speed of the drive motors, in native units
+	 * per 100ms, of the robot driving on the ground at 100% throttle
 	 */
-	private int robotMaxSpeed;
+	public int robotMaxSpeed;
 
 	/**
 	 * Speed scalar for the left and right wheels. Affects autonomous and
@@ -108,6 +115,18 @@ public class SRXTankDrive implements ITankDrive
 	public void setGearRatio(double gearRatio)
 	{
 		this.gearRatio = gearRatio;
+	}
+
+	// Singelton methods
+	private static SRXTankDrive instance = null;
+
+	public static SRXTankDrive getInstance() {
+		if (instance != null) {
+			return instance;
+		}
+		
+		Log.fatal("SRXTankDrive", "Attempted to get instance before initializtion! Call initialize(...) first.");
+		return null;
 	}
 
 	/**
@@ -128,11 +147,14 @@ public class SRXTankDrive implements ITankDrive
 	 * @param track
 	 *            distance across between left and right wheels
 	 * @param robotFreeSpeed
-	 *            the measured maximum speed in native units per 100ms of the
-	 *            robot when it is driving in low gear
+	 *            The maxiumum measured speed of the drive motors, in native units
+	 *            per 100ms, of the robot driving on the ground at 100% throttle
 	 */
-	public SRXTankDrive(TalonSRX leftMotors, TalonSRX rightMotors, double wheelCircumfrence, double gearRatio,
-			double wheelBase, double track, int robotFreeSpeed)
+	public static void initialize(TalonSRX leftMotors, TalonSRX rightMotors, double wheelCircumfrence, double gearRatio, double wheelBase, double track, int robotFreeSpeed) {
+		instance = new SRXTankDrive(leftMotors, rightMotors, wheelCircumfrence, gearRatio, wheelBase, track, robotFreeSpeed);
+	}
+	
+	private SRXTankDrive(TalonSRX leftMotors, TalonSRX rightMotors, double wheelCircumfrence, double gearRatio, double wheelBase, double track, int robotFreeSpeed)
 	{
 		this.leftMotors = leftMotors;
 		this.rightMotors = rightMotors;
@@ -143,8 +165,8 @@ public class SRXTankDrive implements ITankDrive
 		this.gearRatio = gearRatio;
 		this.robotMaxSpeed = robotFreeSpeed;
 
-		double turningCircleDiameter = Math.sqrt(RobotMath.square(track) + RobotMath.square(wheelBase)); // pythagorean
-																											// theorem
+		double turningCircleDiameter = Math.sqrt(RobotMath.square(track) + RobotMath.square(wheelBase)); // pythagorean theorem
+		
 		turningCircleCircumference = turningCircleDiameter * Math.PI;
 
 		leftSpeedScalar = 1;
@@ -162,10 +184,6 @@ public class SRXTankDrive implements ITankDrive
 	{
 		if (!configuredForTeleop)
 		{
-			// Now encapsulated in the set() method as of CTRE Pheonix
-			// leftMotors.changeControlMode(TalonSRX.TalonControlMode.PercentVbus);
-			// rightMotors.changeControlMode(TalonSRX.TalonControlMode.PercentVbus);
-
 			leftMotors.setNeutralMode(NeutralMode.Brake);
 			rightMotors.setNeutralMode(NeutralMode.Brake);
 
@@ -175,11 +193,6 @@ public class SRXTankDrive implements ITankDrive
 
 	private void configureForAuto()
 	{
-		// Now encapsulated in the set() method as of CTRE Pheonix
-		// autonomous commands may have changed this stuff, so we always set it
-		// leftMotors.changeControlMode(TalonSRX.TalonControlMode.MotionMagic);
-		// rightMotors.changeControlMode(TalonSRX.TalonControlMode.MotionMagic);
-
 		leftMotors.setNeutralMode(NeutralMode.Coast);
 		rightMotors.setNeutralMode(NeutralMode.Coast);
 
@@ -443,6 +456,96 @@ public class SRXTankDrive implements ITankDrive
 		double difference = leftDist - rightDist;
 
 		return RobotMath.normalizeAngle((difference / turningCircleCircumference) * Angle.ROTATIONS);
+	}
+
+	public class CmdMotionProfileMove extends Command {
+		private double power;
+		private double timeoutMs;
+
+		private List<ProfilePoint> points;
+		private int bufferIndex = 0;
+
+		private MotionProfileStatus leftStatus, rightStatus;
+
+		public CmdMotionProfileMove(List<ProfilePoint> points, double power, double timeoutMs) {
+			super(timeoutMs / 1000.0);
+
+			this.points = points;
+			this.power = power;
+			
+			this.timeoutMs = timeoutMs;
+		}
+
+		private void fill() {
+			final int emptySpots = 2000;
+			int spotsToFill = emptySpots;
+
+			if (leftMotors.getMotionProfileTopLevelBufferCount() > 50 ||
+				rightMotors.getMotionProfileTopLevelBufferCount() > 50) {
+				return;
+			}
+			
+			int remaining = points.size() - bufferIndex;
+			if (remaining < emptySpots) {
+				spotsToFill = remaining;
+			}
+
+			for (int i = bufferIndex; i < bufferIndex + spotsToFill; i++) {
+				leftMotors.pushMotionProfileTrajectory(points.get(i).leftPoint);
+				rightMotors.pushMotionProfileTrajectory(points.get(i).rightPoint);
+			}
+
+			bufferIndex += spotsToFill;
+		}
+
+		protected void initialize() {
+			leftMotors.clearMotionProfileHasUnderrun(Constants.CAN_TIMEOUT);
+			rightMotors.clearMotionProfileHasUnderrun(Constants.CAN_TIMEOUT);
+
+			leftMotors.clearMotionProfileTrajectories();
+			rightMotors.clearMotionProfileTrajectories();
+
+			leftMotors.configMotionProfileTrajectoryPeriod(0, Constants.CAN_TIMEOUT);
+			rightMotors.configMotionProfileTrajectoryPeriod(0, Constants.CAN_TIMEOUT);
+
+			leftMotors.changeMotionControlFramePeriod(Pathfinder.durationMs / 2);
+			rightMotors.changeMotionControlFramePeriod(Pathfinder.durationMs / 2);
+
+			// fill();
+
+			for (int i = 0; i < points.size(); i++) {
+				leftMotors.pushMotionProfileTrajectory(points.get(i).leftPoint);
+				rightMotors.pushMotionProfileTrajectory(points.get(i).rightPoint);
+			}
+
+			new Notifier(() -> {
+				leftMotors.processMotionProfileBuffer();
+				rightMotors.processMotionProfileBuffer();
+			}).startPeriodic(Pathfinder.durationSec / 2);
+		}
+
+		@Override
+		protected void execute() {
+			// Now that I think about it, the 2048 buffer can hold the largest possible
+			// profile for any control period greater than 5ms.
+
+			// fill();
+		}
+
+		@Override
+		protected boolean isFinished() {
+			leftMotors.getMotionProfileStatus(leftStatus);
+			rightMotors.getMotionProfileStatus(rightStatus);
+
+			return this.isTimedOut() || leftStatus.isLast && rightStatus.isLast;
+		}
+
+		@Override
+		protected void end() {
+			leftMotors.clearMotionProfileTrajectories();
+			rightMotors.clearMotionProfileTrajectories();
+		}
+
 	}
 
 	/**
