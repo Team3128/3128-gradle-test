@@ -16,6 +16,7 @@ import org.team3128.common.util.units.Length;
 import java.util.List;
 
 import com.ctre.phoenix.motion.MotionProfileStatus;
+import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -476,28 +477,6 @@ public class SRXTankDrive implements ITankDrive
 			this.timeoutMs = timeoutMs;
 		}
 
-		private void fill() {
-			final int emptySpots = 2000;
-			int spotsToFill = emptySpots;
-
-			if (leftMotors.getMotionProfileTopLevelBufferCount() > 50 ||
-				rightMotors.getMotionProfileTopLevelBufferCount() > 50) {
-				return;
-			}
-			
-			int remaining = points.size() - bufferIndex;
-			if (remaining < emptySpots) {
-				spotsToFill = remaining;
-			}
-
-			for (int i = bufferIndex; i < bufferIndex + spotsToFill; i++) {
-				leftMotors.pushMotionProfileTrajectory(points.get(i).leftPoint);
-				rightMotors.pushMotionProfileTrajectory(points.get(i).rightPoint);
-			}
-
-			bufferIndex += spotsToFill;
-		}
-
 		protected void initialize() {
 			leftMotors.clearMotionProfileHasUnderrun(Constants.CAN_TIMEOUT);
 			rightMotors.clearMotionProfileHasUnderrun(Constants.CAN_TIMEOUT);
@@ -513,9 +492,25 @@ public class SRXTankDrive implements ITankDrive
 
 			// fill();
 
+			TrajectoryPoint point = new TrajectoryPoint();
+			point.profileSlotSelect0 = 0;
+			point.timeDur = Pathfinder.duration;
+			point.zeroPos = false;
+			point.isLastPoint = false;
+				
 			for (int i = 0; i < points.size(); i++) {
-				leftMotors.pushMotionProfileTrajectory(points.get(i).leftPoint);
-				rightMotors.pushMotionProfileTrajectory(points.get(i).rightPoint);
+				if (i == 0) 
+					point.zeroPos = true;
+				if (i == points.size() - 1)
+					point.isLastPoint = true;
+
+				point.position = points.get(i).leftDistance;
+				point.velocity = points.get(i).leftSpeed;
+				leftMotors.pushMotionProfileTrajectory(point);
+
+				point.position = points.get(i).rightDistance;
+				point.velocity = points.get(i).rightSpeed;
+				rightMotors.pushMotionProfileTrajectory(point);
 			}
 
 			new Notifier(() -> {

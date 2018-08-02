@@ -1,5 +1,6 @@
 package org.team3128.common.drive.pathfinder;
 
+import org.team3128.common.util.Log;
 import org.team3128.common.util.RobotMath;
 
 /**
@@ -56,20 +57,54 @@ public class Segment {
 	}
 	
 	public double getX(double s) {
-		//return 0.5 * ax * Math.pow(s, 5) + 0.5 * bx * Math.pow(s, 4) + 0.5 * cx * Math.pow(s, 3) + 0.5 * Math.pow(s, 2) + x0p * s + x0;
+		//return ax * Math.pow(s, 5) + bx * Math.pow(s, 4) + cx * Math.pow(s, 3) + 0.5 * Math.pow(s, 2) + x0p * s + x0;
 		return RobotMath.polynomial(s, ax, bx, cx, 0.5, x0p, x0);
 	}
 	
 	public double getY(double s) {
-		//return 0.5 * ay * Math.pow(s, 5) + 0.5 * by * Math.pow(s, 4) + 0.5 * cy * Math.pow(s, 3) + 0.5 * Math.pow(s, 2) + y0p * s + y0;
+		//return ay * Math.pow(s, 5) + by * Math.pow(s, 4) + cy * Math.pow(s, 3) + 0.5 * Math.pow(s, 2) + y0p * s + y0;
 		return RobotMath.polynomial(s, ay, by, cy, 0.5, y0p, y0);
 	}
 
 	public double getAngle(double s) {
-		double dxds = RobotMath.polynomial(s, 5 * ax, 4 * cx, 3 * cx, 2 * 0.5, x0p);
+		double dxds = RobotMath.polynomial(s, 5 * ax, 4 * bx, 3 * cx, 2 * 0.5, x0p);
 		double dyds = RobotMath.polynomial(s, 5 * ay, 4 * by, 3 * cy, 2 * 0.5, y0p);
 
-		return Math.toDegrees(Math.atan(dyds / dxds));
+		double angle = Math.toDegrees(Math.atan(dyds / dxds));
+
+		if (dxds == 0) {
+			if (dyds > 0) return 90;
+			else if (dyds < 0) return 270;
+			else Log.fatal("Segment", "For some strange reason, your robot has a point where it isn't moving; this is all good and fine, but it breaks the math. Consider splitting your path.");
+		}
+
+		if (dyds == 0) {
+			if (dxds > 0) return 0;
+			else if (dxds < 0) return 180;
+			//I would be very suprised if it missed the first fatal error...
+		}
+
+		if (dyds > 0 && dxds > 0) {
+			// This is:      Quadrant 1
+			// Math returns: Quadrant 1 (positive)
+		}
+		else if (dyds > 0 && dxds < 0) {
+			// This is:      Quadrant 2
+			// Math returns: Quadrant 4 (negative)
+			angle += 180;
+		}
+		else if (dyds < 0 && dxds < 0) {
+			// This is:      Quadrant 3
+			// Math returns: Quadrant 1 (positive)
+			angle += 180;
+		}
+		else if (dyds < 0 && dxds > 0) {
+			// This is:      Quadrant 4
+			// Math returns: Quadrant 4 (negative)
+			angle += 360;
+		}
+
+		return angle;
 	}
 
 	public String toString() {

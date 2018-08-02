@@ -13,9 +13,10 @@ import org.team3128.common.drive.pathfinder.Trajectory;
 import org.team3128.common.drive.pathfinder.Waypoint;
 import org.team3128.common.util.units.Length;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class MainGradleTest extends NarwhalRobot {
 	List<ProfilePoint> points;
@@ -28,20 +29,28 @@ public class MainGradleTest extends NarwhalRobot {
 		rightDriveMotor = new TalonSRX(11);
 		SRXTankDrive.initialize(leftDriveMotor, rightDriveMotor, 12.6 * Length.in, 1.0, 25 * Length.in, 30 * Length.in, 3800);
 
-		Trajectory t = Pathfinder.generate(50.0, 
+		Trajectory t = Pathfinder.generate(200.0, 
 			new Waypoint(0, 0, 90),
-			new Waypoint(6 * Length.ft, 6 * Length.ft, 0)
+			new Waypoint(6 * Length.ft, 6 * Length.ft, 0),
+			new Waypoint(10 * Length.ft, 8 * Length.ft, 90),
+			new Waypoint(0 * Length.ft, 4 * Length.ft, 135)
 		);
 
-		System.out.println(t);
-
 		long startTime = System.currentTimeMillis();
-		points = Pathfinder.getProfilePoints(t);
+		points = Pathfinder.getProfilePoints(t, 1.5);
+
+		//System.out.println(t);
+
 		Log.info("Elapsed Time: " + (System.currentTimeMillis() - startTime) + " ms");
 
-		for (ProfilePoint p : points) {
-			System.out.println(p.leftPoint.position + "," + p.rightPoint.position);
-		}
+		// for (ProfilePoint p : points) {
+		// 	System.out.println(p.leftDistance + "," + p.rightDistance);
+		// 	try {
+		// 		Thread.sleep(50);
+		// 	} catch (InterruptedException e) {
+		// 		e.printStackTrace();
+		// 	}
+		// }
 	}
 	
 	@Override
@@ -96,6 +105,7 @@ public class MainGradleTest extends NarwhalRobot {
 	
 	@Override
 	protected void updateDashboard() {
-
+		DriverStation.getInstance();
+		RobotController.getBatteryVoltage();
     }
 }

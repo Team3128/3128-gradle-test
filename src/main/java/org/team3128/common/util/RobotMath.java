@@ -456,7 +456,7 @@ public class RobotMath {
 	 * Calculates the linear distance between two points (x0, y0) and (x1, y1) specified in cartesian coordinates, using Pythagorean Theroem.
 	 */
 	public static double distance(double x0, double y0, double x1, double y1) {
-		return Math.sqrt(Math.pow((x0 - x1), 2) + Math.pow((y0 - y1), 2));
+		return Math.sqrt(Math.pow(x0 - x1, 2) + Math.pow(y0 - y1, 2));
 	}
 }
 

@@ -10,6 +10,8 @@ import org.team3128.common.drive.SRXTankDrive;
 import org.team3128.common.util.Convert;
 import org.team3128.common.util.RobotMath;
 
+import edu.wpi.first.wpilibj.Timer;
+
 
 /**
  * Main class for the pathfinder system. Generates entire trajectories and creates the series of motion profile points to follow a trajectory.
@@ -18,9 +20,11 @@ import org.team3128.common.util.RobotMath;
  * 
  */
 public class Pathfinder {
-    final static TrajectoryDuration duration = TrajectoryDuration.Trajectory_Duration_30ms;
+    final public static TrajectoryDuration duration = TrajectoryDuration.Trajectory_Duration_30ms;
     final public static double durationSec = duration.value / 1000.0;
     final public static int durationMs = duration.value;
+
+    final private static double ARBITRARY_LOOP_PROTECTION_BUFFER = 5.0;
 
     public static Trajectory generate(double smoothness, Waypoint... waypoints) {
         Segment[] segments = new Segment[waypoints.length - 1];
@@ -32,7 +36,7 @@ public class Pathfinder {
         return new Trajectory(segments);
     }
 
-    public static List<ProfilePoint> getProfilePoints(Trajectory trajectory) {
+    public static List<ProfilePoint> getProfilePoints(Trajectory trajectory, double power) {
         // Length        is measured in cm
         // Velocity      is measured in cm/s
         // Acceleration  is measured in cm/s^2
@@ -40,15 +44,13 @@ public class Pathfinder {
         // The only time nu and nu/100ms are used is for passing the feed-fwd
         // velocity and feedback distance to the Talon SRX through TrajectoryPoint
 
-        List<ProfilePoint> points = new ArrayList<ProfilePoint>();
-
         SRXTankDrive drive = SRXTankDrive.getInstance();
 
-        final double v_max = Convert.velocityCTREtoCMS(drive.robotMaxSpeed, drive.wheelCircumfrence);
+        final double v_max = power * Convert.velocityCTREtoCMS(drive.robotMaxSpeed, drive.wheelCircumfrence);
         final double wb = drive.wheelBase;
 
         final int num_segments = trajectory.getSegments().length;
-        final int precision = 10000;
+        final int precision = 1000;
 
         final Waypoint start = trajectory.getStart();
 
@@ -60,10 +62,10 @@ public class Pathfinder {
         double a_tp = start.angle;
 
         double x_l_tp = start.x - (wb / 2) * RobotMath.cos(start.angle - 90);
-        double y_l_tp = start.x - (wb / 2) * RobotMath.sin(start.angle - 90);
+        double y_l_tp = start.y - (wb / 2) * RobotMath.sin(start.angle - 90);
 
         double x_r_tp = start.x + (wb / 2) * RobotMath.cos(start.angle - 90);
-        double y_r_tp = start.x + (wb / 2) * RobotMath.sin(start.angle - 90);
+        double y_r_tp = start.y + (wb / 2) * RobotMath.sin(start.angle - 90);
 
         double x_p = start.x;
         double y_p = start.y;
@@ -77,7 +79,14 @@ public class Pathfinder {
         double v_major, v_minor;
         double v_l, v_r;
 
+        List<ProfilePoint> points = new ArrayList<ProfilePoint>();
+        points.add(new ProfilePoint(x_tp, y_tp, x_l_tp, y_l_tp, x_r_tp, y_r_tp, l_sum, r_sum, 0, 0));
+
+        //System.out.println("s,d,dt,da,a,x,y");
+
+        double start_time;
         for (int step = 1; step < precision * num_segments; step++) {
+            start_time = Timer.getFPGATimestamp();
             double s = 1.0 * (step % precision) / precision;
 
             Segment segment = trajectory.getSegments()[step / precision];
@@ -87,11 +96,23 @@ public class Pathfinder {
             a = segment.getAngle(s);
 
             da = a - a_tp;
+            if (da > 360 - ARBITRARY_LOOP_PROTECTION_BUFFER) {
+                da = 360 - da;
+            }
+            else if (da < ARBITRARY_LOOP_PROTECTION_BUFFER - 360) {
+                da = 360 + da;
+            }
+            
             d = RobotMath.distance(x, y, x_tp, y_tp);
 
-            System.out.println(s + ": " + d);
+            dt = (wb * Math.abs(Math.toRadians(da)) / 4 + d) / v_max;
 
-            dt = (wb * Math.toRadians(Math.abs(da)) / 4 + d) / v_max;
+            // System.out.print(s  + ",");
+            // System.out.print(d  + ",");
+            // System.out.print(dt + ",");
+            // System.out.print(da + "," + a + ",");
+            // System.out.print(x + "," + y + "\n");
+            // Thread.sleep(250);
 
             if (dt > durationSec) {
                 v_major = Convert.velocityCMStoCTRE(v_max, drive.wheelCircumfrence);
@@ -106,32 +127,35 @@ public class Pathfinder {
                     v_r = v_minor;
                 }
 
-                x_l = x_p + (wb / 2) * RobotMath.cos(a_p - 90);
-                y_l = y_p + (wb / 2) * RobotMath.sin(a_p - 90);
+                x_l = x_p - (wb / 2) * RobotMath.cos(a_p - 90);
+                y_l = y_p - (wb / 2) * RobotMath.sin(a_p - 90);
 
-                x_r = x_p - (wb / 2) * RobotMath.cos(a_p - 90);
-                y_r = y_p - (wb / 2) * RobotMath.sin(a_p - 90);
+                x_r = x_p + (wb / 2) * RobotMath.cos(a_p - 90);
+                y_r = y_p + (wb / 2) * RobotMath.sin(a_p - 90);
+
+                // System.out.println("Left  - " + x_l + "," + y_l);
+                // System.out.println("Right - " + x_r + "," + y_r);
+                // System.out.println(".");
+                // System.out.println("ld: " + RobotMath.distance(x_l, y_l, x_l_tp, y_l_tp));
+                // System.out.println("rd: " + RobotMath.distance(x_r, y_r, x_r_tp, y_r_tp));
+                // System.out.println(".");
+                // System.out.println("lnu: " + Convert.lengthCMtoCTRE(RobotMath.distance(x_l, y_l, x_l_tp, y_l_tp), drive.wheelCircumfrence));
+                // System.out.println("rnu: " + Convert.lengthCMtoCTRE(RobotMath.distance(x_r, y_r, x_r_tp, y_r_tp), drive.wheelCircumfrence));
+                // System.out.println(".");
+
 
                 l_sum += Convert.lengthCMtoCTRE(RobotMath.distance(x_l, y_l, x_l_tp, y_l_tp), drive.wheelCircumfrence);
                 r_sum += Convert.lengthCMtoCTRE(RobotMath.distance(x_r, y_r, x_r_tp, y_r_tp), drive.wheelCircumfrence);
 
-                TrajectoryPoint leftPoint = new TrajectoryPoint();
-                leftPoint.position = l_sum;
-                leftPoint.velocity = v_l;
-                leftPoint.profileSlotSelect0 = 0;
-                leftPoint.timeDur = duration;
-                leftPoint.zeroPos = false;
-                leftPoint.isLastPoint = false;
+                // System.out.println("lsum: " + l_sum);
+                // System.out.println("rsum: " + r_sum);
+                // System.out.println(".");
+                // System.out.println(".");
 
-                TrajectoryPoint rightPoint = new TrajectoryPoint();
-                rightPoint.position = r_sum;
-                rightPoint.velocity = v_r;
-                rightPoint.profileSlotSelect0 = 0;
-                rightPoint.timeDur = duration;
-                rightPoint.zeroPos = false;
-                rightPoint.isLastPoint = false;
-
-                points.add(new ProfilePoint(leftPoint, rightPoint));
+                points.add(new ProfilePoint(x_p, y_p, x_l, y_l, x_r, y_r, l_sum, r_sum, v_l, v_r));
+                //System.out.println(" - " + step + "(" + dt + "s) " + a + "/" + da + " " + x_p + "," + y_p);
+                //System.out.println(x_p + "," + y_p);
+                //System.out.println(Timer.getFPGATimestamp() - start_time + " s");
 
                 x_tp = x_p;
                 x_l_tp = x_l;

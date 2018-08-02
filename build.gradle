@@ -3,7 +3,7 @@ plugins {
     id "edu.wpi.first.GradleRIO" version "2019.0.0-alpha-3"
 }
 
-def ROBOT_CLASS = "org.team3128.guido.main.MainGuidoCompetition"
+def ROBOT_CLASS = "org.team3128.gradletest.main.MainGradleTest"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project EmbeddedTools.
@@ -19,6 +19,7 @@ deploy {
             // We had to set a password to access the filesystem, so here it is...
             locations {
                 ssh {
+                    address = 'roborio-3128-frc.local'
                     user = 'admin'
                     password = '3128'
                 }
