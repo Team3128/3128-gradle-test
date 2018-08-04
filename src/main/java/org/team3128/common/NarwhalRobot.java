@@ -3,8 +3,8 @@ package org.team3128.common;
 import java.util.ArrayList;
 
 import org.team3128.common.listener.ListenerManager;
+import org.team3128.common.narwhaldashboard.NarwhalDashboard;
 import org.team3128.common.util.Assert;
-//import org.team3128.common.util.GenericSendableChooser;
 import org.team3128.common.util.Log;
 
 import edu.wpi.first.wpilibj.RobotBase;
@@ -14,8 +14,8 @@ import edu.wpi.first.wpilibj.hal.FRCNetComm.tInstances;
 import edu.wpi.first.wpilibj.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.wpilibj.hal.HAL;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+//import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /*
  * THIS FILE SHOULD NOT BE MODIFIED
@@ -52,7 +52,8 @@ public abstract class NarwhalRobot extends RobotBase
 	 * 
 	 * This function will called multiple times.
 	 */
-	protected void constructAutoPrograms(SendableChooser<CommandGroup> programChooser) {}
+	protected void constructAutoPrograms() {}
+	//protected void constructAutoPrograms(SendableChooser<CommandGroup> programChooser) {}
 	
 	/**
 	 * Called every time teleop is started from the driver station
@@ -99,7 +100,7 @@ public abstract class NarwhalRobot extends RobotBase
 	protected void testPeriodic() {}
 	
 	/**
-	 * Use this function to read and write data from the SmartDashboard.
+	 * Use this function to read and write data from NarwhalDashboard.
 	 * It is called asynchronously, no matter what mode the robot is in.
 	 */
 	protected void updateDashboard() {}
@@ -107,9 +108,9 @@ public abstract class NarwhalRobot extends RobotBase
 	//---------------------------------------------------------------------------------
 
 	ArrayList<ListenerManager> listenerManagers = new ArrayList<ListenerManager>();
-	SendableChooser<CommandGroup> autoChooser;
+	//SendableChooser<CommandGroup> autoChooser;
 	
-	final static int dashboardUpdateWavelength = 100; //NetworkTables transmits every 100ms... I think
+	final static int dashboardUpdateWavelength = NarwhalDashboard.getUpdateWavelength();
 	
 	Thread dashboardUpdateThread;
 	
@@ -119,6 +120,19 @@ public abstract class NarwhalRobot extends RobotBase
 	private boolean autonomousInitialized = false;
 	private boolean teleopInitialized = false;
 	private boolean testInitialized = false;
+
+	// I want to replace the four initialized booleans with an enum,
+	// but I'm scared that something will break. So I won't.
+
+	// private ControlMode currentControlMode = ControlMode.NONE;
+
+	// private enum ControlMode {
+	// 	NONE,
+	// 	DISABLED,
+	// 	AUTONOMOUS,
+	// 	TELEOP,
+	// 	TEST;
+	// }
 	
 	public void startCompetition()
 	{
@@ -130,7 +144,8 @@ public abstract class NarwhalRobot extends RobotBase
         Log.info("NarwhalRobot", "Welcome to the FRC Team 3128 Common Library version 4.0!");
         Log.info("NarwhalRobot", "Initializing Base Robot...");
 	    
-        Assert.setRobot(this);
+		Assert.setRobot(this);
+		NarwhalDashboard.startServer();
         
         try
         {
@@ -325,21 +340,24 @@ public abstract class NarwhalRobot extends RobotBase
 	private void setupAutoChooser()
 	{
         Log.info("NarwhalRobot", "Setting Up Autonomous Chooser...");
-        Scheduler.getInstance().removeAll(); // get rid of any paused commands
-		autoChooser = new SendableChooser<>();
-        constructAutoPrograms(autoChooser);
-        
-       
-        SmartDashboard.putData("autoChooser", autoChooser);
-       
+		Scheduler.getInstance().removeAll(); // get rid of any paused commands
+		
+		NarwhalDashboard.clearAutos();
+		constructAutoPrograms();
+
+		// autoChooser = new SendableChooser<>();
+        // constructAutoPrograms(autoChooser);
+        //
+        // SmartDashboard.putData("autoChooser", autoChooser);
 	}
 	
 	private void runAutoProgram()
 	{
 		CommandGroup autoProgram = null;
 
-		autoProgram = autoChooser.getSelected();
-		
+		//autoProgram = autoChooser.getSelected();
+		autoProgram = NarwhalDashboard.getSelectedAuto();
+
 		if(autoProgram == null)
 		{
 			Log.recoverable("NarwhalRobot", "Can't start autonomous, there is no sequence to run.  "

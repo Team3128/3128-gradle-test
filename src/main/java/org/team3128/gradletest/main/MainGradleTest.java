@@ -59,7 +59,7 @@ public class MainGradleTest extends NarwhalRobot {
 	}
     
     @Override
-	protected void constructAutoPrograms(SendableChooser<CommandGroup> programChooser) {
+	protected void constructAutoPrograms() {
 
 	}
 	
