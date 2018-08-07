@@ -1,8 +1,8 @@
 package org.team3128.common.drive;
 
-import org.team3128.common.drive.pathfinder.Pathfinder;
-import org.team3128.common.drive.pathfinder.ProfilePoint;
-import org.team3128.common.drive.pathfinder.Trajectory;
+import org.team3128.common.drive.routemaker.Routemaker;
+import org.team3128.common.drive.routemaker.ProfilePoint;
+import org.team3128.common.drive.routemaker.Waypoint;
 import org.team3128.common.hardware.misc.TwoSpeedGearshift;
 import org.team3128.common.util.Assert;
 import org.team3128.common.util.Constants;
@@ -21,7 +21,9 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
@@ -45,6 +47,14 @@ import edu.wpi.first.wpilibj.command.Command;
 public class SRXTankDrive implements ITankDrive
 {
 	private TalonSRX leftMotors, rightMotors;
+
+	public TalonSRX getLeftMotors() {
+		return leftMotors;
+	}
+
+	public TalonSRX getRightMotors() {
+		return rightMotors;
+	}
 
 	private TwoSpeedGearshift gearshift;
 
@@ -459,42 +469,146 @@ public class SRXTankDrive implements ITankDrive
 		return RobotMath.normalizeAngle((difference / turningCircleCircumference) * Angle.ROTATIONS);
 	}
 
-	public class CmdMotionProfileMove extends Command {
-		private double power;
-		private double timeoutMs;
+	public class CmdRealtimeRouteDrive extends CmdMotionProfileMove {
+		private Waypoint[] waypoints;
+		private double power, smoothness;
 
-		private List<ProfilePoint> points;
-		private int bufferIndex = 0;
+		private Thread PBFRFA;
+
+		private ADXRS450_Gyro gyro;
 
 		private MotionProfileStatus leftStatus, rightStatus;
+		private ProfilePoint point;
 
-		public CmdMotionProfileMove(List<ProfilePoint> points, double power, double timeoutMs) {
+		private double x0, y0, x1, y1;
+
+		private TrajectoryPoint trajPoint = new TrajectoryPoint();
+
+		private boolean done = false;
+
+		private final double accelerationDistance = 2 * Length.ft;
+
+		private double startDist, endDist;
+
+		public CmdRealtimeRouteDrive(ADXRS450_Gyro gyro, double power, double smoothness, double timeoutMs, Waypoint... waypoints) {
+			super(timeoutMs / 1000.0);
+
+			this.gyro = gyro;
+
+			this.waypoints = waypoints;
+
+			this.power = power;
+			this.smoothness = smoothness;
+
+			trajPoint.profileSlotSelect0 = 0;
+			trajPoint.timeDur = Routemaker.duration;
+			trajPoint.zeroPos = false;
+			trajPoint.isLastPoint = false;
+
+			x0 = waypoints[0].x;
+			y0 = waypoints[0].y;
+
+			x1 = waypoints[waypoints.length - 1].x;
+			y1 = waypoints[waypoints.length - 1].y;
+		}
+
+		@Override
+		protected void initialize() {
+			super.initialize();
+
+			leftMotors.changeMotionControlFramePeriod(1);
+			rightMotors.changeMotionControlFramePeriod(1);
+			
+			// Generate the initial path
+			Odometer.initialize(gyro, 0, 0, 0);
+			Routemaker.initialize(power, smoothness, waypoints);
+
+			// Start the motion profile mode
+			leftMotors.set(ControlMode.MotionProfile, 1);
+			rightMotors.set(ControlMode.MotionProfile, 1);
+
+			// Start a thread for handling the PBFRFRA calculations and odometery readings
+			PBFRFA = new Thread(() -> {
+				final double accelFactor = 0.1;
+
+				double lastUpdateTimeMs = 0;
+				double processStartTimeMs = 0;
+
+				double spdFrac = accelFactor;
+				while (true) {
+					Odometer.getInstance().update();
+
+					if (1000.0 * Timer.getFPGATimestamp() - lastUpdateTimeMs > Routemaker.durationMs - 2) {
+						processStartTimeMs = 1000.0 * Timer.getFPGATimestamp();
+						point = Routemaker.getInstance().getNextPoint(spdFrac);
+
+						trajPoint.isLastPoint = point.last;
+
+						trajPoint.position = point.leftDistance;
+						trajPoint.velocity = point.leftSpeed;
+						leftMotors.pushMotionProfileTrajectory(trajPoint);
+
+						trajPoint.position = point.rightDistance;
+						trajPoint.velocity = point.rightSpeed;
+						rightMotors.pushMotionProfileTrajectory(trajPoint);
+
+						leftMotors.processMotionProfileBuffer();
+						rightMotors.processMotionProfileBuffer();
+
+						lastUpdateTimeMs = 1000.0 * Timer.getFPGATimestamp();
+
+						Log.info("CmdRealtimeRouteDrive", "Start-to-stop Time: " + (lastUpdateTimeMs - processStartTimeMs) + "ms.");
+
+						startDist = RobotMath.distance(x0, y0, Odometer.getInstance().getX(), Odometer.getInstance().getY());
+						endDist = RobotMath.distance(x1, y1, Odometer.getInstance().getX(), Odometer.getInstance().getY());
+
+						spdFrac = Math.min(1.0, 0.1 + startDist/accelerationDistance);
+						spdFrac = Math.min(1.0, endDist/accelerationDistance);
+
+						if (trajPoint.isLastPoint) {
+							this.done = true;
+							break;
+						}
+					}
+
+					try {
+						Thread.sleep(1);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+
+				Log.info("CmdRealtimeRouteDrive", "Motion complete.");
+			});
+			PBFRFA.start();
+		}
+
+		@Override
+		protected boolean isFinished() {
+			return this.isTimedOut() || done;
+		}
+	}
+
+	public class CmdStaticRouteDrive extends CmdMotionProfileMove {
+		private List<ProfilePoint> points;
+		private MotionProfileStatus leftStatus, rightStatus;
+
+		public CmdStaticRouteDrive(List<ProfilePoint> points, double timeoutMs) {
 			super(timeoutMs / 1000.0);
 
 			this.points = points;
-			this.power = power;
-			
-			this.timeoutMs = timeoutMs;
 		}
 
+		@Override
 		protected void initialize() {
-			leftMotors.clearMotionProfileHasUnderrun(Constants.CAN_TIMEOUT);
-			rightMotors.clearMotionProfileHasUnderrun(Constants.CAN_TIMEOUT);
-
-			leftMotors.clearMotionProfileTrajectories();
-			rightMotors.clearMotionProfileTrajectories();
-
-			leftMotors.configMotionProfileTrajectoryPeriod(0, Constants.CAN_TIMEOUT);
-			rightMotors.configMotionProfileTrajectoryPeriod(0, Constants.CAN_TIMEOUT);
-
-			leftMotors.changeMotionControlFramePeriod(Pathfinder.durationMs / 2);
-			rightMotors.changeMotionControlFramePeriod(Pathfinder.durationMs / 2);
-
-			// fill();
+			super.initialize();
+			
+			leftMotors.changeMotionControlFramePeriod(Routemaker.durationMs / 2);
+			rightMotors.changeMotionControlFramePeriod(Routemaker.durationMs / 2);
 
 			TrajectoryPoint point = new TrajectoryPoint();
 			point.profileSlotSelect0 = 0;
-			point.timeDur = Pathfinder.duration;
+			point.timeDur = Routemaker.duration;
 			point.zeroPos = false;
 			point.isLastPoint = false;
 				
@@ -516,23 +630,52 @@ public class SRXTankDrive implements ITankDrive
 			new Notifier(() -> {
 				leftMotors.processMotionProfileBuffer();
 				rightMotors.processMotionProfileBuffer();
-			}).startPeriodic(Pathfinder.durationSec / 2);
+			}).startPeriodic(Routemaker.durationSec / 2);
+
+			leftMotors.set(ControlMode.MotionProfile, 1);
+			rightMotors.set(ControlMode.MotionProfile, 1);
 		}
 
 		@Override
-		protected void execute() {
-			// Now that I think about it, the 2048 buffer can hold the largest possible
-			// profile for any control period greater than 5ms.
-
-			// fill();
-		}
-
-		@Override
-		protected boolean isFinished() {
+		protected synchronized boolean isFinished() {
 			leftMotors.getMotionProfileStatus(leftStatus);
 			rightMotors.getMotionProfileStatus(rightStatus);
 
 			return this.isTimedOut() || leftStatus.isLast && rightStatus.isLast;
+		}
+	}
+
+	public abstract class CmdMotionProfileMove extends Command {
+		public CmdMotionProfileMove(double timeoutMs) {
+			super(timeoutMs / 1000.0);
+		}
+
+		protected void initialize() {
+			leftMotors.clearMotionProfileHasUnderrun(Constants.CAN_TIMEOUT);
+			rightMotors.clearMotionProfileHasUnderrun(Constants.CAN_TIMEOUT);
+
+			leftMotors.clearMotionProfileTrajectories();
+			rightMotors.clearMotionProfileTrajectories();
+
+			leftMotors.configMotionProfileTrajectoryPeriod(0, Constants.CAN_TIMEOUT);
+			rightMotors.configMotionProfileTrajectoryPeriod(0, Constants.CAN_TIMEOUT);
+
+			leftMotors.setSelectedSensorPosition(0, 0, Constants.CAN_TIMEOUT);
+			rightMotors.setSelectedSensorPosition(0, 0, Constants.CAN_TIMEOUT);
+
+			// Fill and feed
+		}
+
+		@Override
+		protected void execute() {
+			// Don't think anything needs to happen here
+			// In theory, for a very large trajectory, the points would
+			// need to be fed in chunks while running.
+		}
+
+		@Override
+		protected boolean isFinished() {
+			return this.isTimedOut();
 		}
 
 		@Override
@@ -540,7 +683,6 @@ public class SRXTankDrive implements ITankDrive
 			leftMotors.clearMotionProfileTrajectories();
 			rightMotors.clearMotionProfileTrajectories();
 		}
-
 	}
 
 	/**

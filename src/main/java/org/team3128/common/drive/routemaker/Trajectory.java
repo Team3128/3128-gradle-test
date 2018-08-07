@@ -1,4 +1,4 @@
-package org.team3128.common.drive.pathfinder;
+package org.team3128.common.drive.routemaker;
 
 /**
  * Represents the series of quintic spline segments that connects a series of waypoints.

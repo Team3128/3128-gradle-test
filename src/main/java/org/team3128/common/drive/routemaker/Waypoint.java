@@ -1,4 +1,4 @@
-package org.team3128.common.drive.pathfinder;
+package org.team3128.common.drive.routemaker;
 
 /**
  * Represents a point in the overall trajectory (specified by the programmer)

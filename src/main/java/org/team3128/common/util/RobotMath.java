@@ -320,7 +320,7 @@ public class RobotMath {
 	 * @param d The angle is degrees.
 	 */
 	public static double cos(double d) {
-		return Math.cos(d / Angle.RADIANS); // convert to radians
+		return Math.cos(Math.toRadians(d)); // convert to radians
 	}
 	
 	/**
@@ -328,7 +328,7 @@ public class RobotMath {
 	 * @param d The angle is degrees.
 	 */
 	public static double sin(double d) {
-		return Math.sin(d / Angle.RADIANS);
+		return Math.sin(Math.toRadians(d));
 	}
 	
 	/**
@@ -336,7 +336,7 @@ public class RobotMath {
 	 * @param d The angle is degrees.
 	 */
 	public static double tan(double d) {
-		return Math.tan(d / Angle.RADIANS);
+		return Math.tan(Math.toRadians(d));
 	}
 	
 	/**

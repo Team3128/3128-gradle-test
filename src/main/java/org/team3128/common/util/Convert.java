@@ -28,4 +28,8 @@ public class Convert {
     public static double lengthCMtoCTRE(double cms, double circumfrence) {
         return 4096 * cms / circumfrence;
     }
+
+    public static double lengthCTREtoCM(double ctre, double circumfrence) {
+        return circumfrence * ctre / 4096;
+    }
 }

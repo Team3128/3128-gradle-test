@@ -25,6 +25,7 @@ import org.team3128.common.listener.POVValue;
 import org.team3128.common.listener.controllers.ControllerExtreme3D;
 import org.team3128.common.listener.controltypes.Button;
 import org.team3128.common.listener.controltypes.POV;
+import org.team3128.common.narwhaldashboard.NarwhalDashboard;
 import org.team3128.common.util.Constants;
 import org.team3128.common.util.Log;
 import org.team3128.common.util.enums.Direction;
@@ -320,45 +321,46 @@ public class MainGuido extends NarwhalRobot
 //		});
 	}
 
-	protected void constructAutoPrograms(SendableChooser<CommandGroup> programChooser)
+	@Override
+	protected void constructAutoPrograms()
 	{
 		PlateAllocation.update();
 		
+		// Oh boy
 		auto_delay = SmartDashboard.getNumber("Autonomous Delay", 0);
 		SmartDashboard.putNumber("Autonomous Delay", auto_delay);
 		
-		programChooser.addObject("None", null);
 //		Debug
 //		
-//		programChooser.addObject("Drive 50 Inches", new AutoDriveDistance(this, 50 * Length.in));
-//		programChooser.addObject("Drive 75 Inches", new AutoDriveDistance(this, 75 * Length.in));
-//		programChooser.addObject("Drive 100 Inches", new AutoDriveDistance(this, 100 * Length.in));
-//		programChooser.addObject("Drive 125 Inches", new AutoDriveDistance(this, 125 * Length.in));
+//		NarwhalDashboard.addAuto("Drive 50 Inches", new AutoDriveDistance(this, 50 * Length.in));
+//		NarwhalDashboard.addAuto("Drive 75 Inches", new AutoDriveDistance(this, 75 * Length.in));
+//		NarwhalDashboard.addAuto("Drive 100 Inches", new AutoDriveDistance(this, 100 * Length.in));
+//		NarwhalDashboard.addAuto("Drive 125 Inches", new AutoDriveDistance(this, 125 * Length.in));
 //		
-//		programChooser.addObject("Test Smooth", new AutoTestSmooth(this));
-//		programChooser.addObject("Test Not Smooth", new AutoTestNotSmooth(this));
+//		NarwhalDashboard.addAuto("Test Smooth", new AutoTestSmooth(this));
+//		NarwhalDashboard.addAuto("Test Not Smooth", new AutoTestNotSmooth(this));
 //		
-		programChooser.addObject("Arc Turn Forwards", new AutoArcTurn(this, 90 * Angle.DEGREES, Direction.RIGHT));
-		programChooser.addObject("Arc Turn Backwards", new AutoArcTurn(this, -90 * Angle.DEGREES, Direction.LEFT));
+		NarwhalDashboard.addAuto("Arc Turn Forwards", new AutoArcTurn(this, 90 * Angle.DEGREES, Direction.RIGHT));
+		NarwhalDashboard.addAuto("Arc Turn Backwards", new AutoArcTurn(this, -90 * Angle.DEGREES, Direction.LEFT));
 //		
-//		programChooser.addObject("Forklift Set Scale", new AutoSetForkliftState(this, ForkliftState.SCALE));
-//		programChooser.addObject("Forklift Set Switch", new AutoSetForkliftState(this, ForkliftState.SWITCH));
-//		programChooser.addObject("Forklift Set Floor", new AutoSetForkliftState(this, ForkliftState.GROUND));
+//		NarwhalDashboard.addAuto("Forklift Set Scale", new AutoSetForkliftState(this, ForkliftState.SCALE));
+//		NarwhalDashboard.addAuto("Forklift Set Switch", new AutoSetForkliftState(this, ForkliftState.SWITCH));
+//		NarwhalDashboard.addAuto("Forklift Set Floor", new AutoSetForkliftState(this, ForkliftState.GROUND));
 		
-		programChooser.addObject("Cross Auto Line", new AutoCrossBaseline(auto_delay));
+		NarwhalDashboard.addAuto("Cross Auto Line", new AutoCrossBaseline(auto_delay));
 		
-		programChooser.addDefault("Center Switch", new AutoSwitchFromCenter(auto_delay));
-		programChooser.addObject("Center Switch x2", new AutoTwoSwitchFromCenter(auto_delay));
+		NarwhalDashboard.addAuto("Center Switch", new AutoSwitchFromCenter(auto_delay));
+		NarwhalDashboard.addAuto("Center Switch x2", new AutoTwoSwitchFromCenter(auto_delay));
 		
-		programChooser.addObject("Right Switch or Scale", new AutoSideSwitchOrScale(Direction.RIGHT, auto_delay));
+		NarwhalDashboard.addAuto("Right Switch or Scale", new AutoSideSwitchOrScale(Direction.RIGHT, auto_delay));
 		
-		programChooser.addObject("Left Switch", new AutoSwitchFromSide(Direction.LEFT, auto_delay));
+		NarwhalDashboard.addAuto("Left Switch", new AutoSwitchFromSide(Direction.LEFT, auto_delay));
 		
-		programChooser.addObject("Right Scale", new AutoScaleFromSide(Direction.RIGHT, auto_delay));
+		NarwhalDashboard.addAuto("Right Scale", new AutoScaleFromSide(Direction.RIGHT, auto_delay));
 		
-		programChooser.addObject("Right Scale Two", new AutoTwoScaleFromSide(Direction.RIGHT, auto_delay));
+		NarwhalDashboard.addAuto("Right Scale Two", new AutoTwoScaleFromSide(Direction.RIGHT, auto_delay));
 
-		programChooser.addObject("Right Scale Switch", new AutoScaleSwitchFromRight(Direction.RIGHT, auto_delay));
+		NarwhalDashboard.addAuto("Right Scale Switch", new AutoScaleSwitchFromRight(Direction.RIGHT, auto_delay));
 	}
 
 	@Override
@@ -424,8 +426,6 @@ public class MainGuido extends NarwhalRobot
 //		SmartDashboard.putNumber("Forklift Velocity", forkliftMotorLeader.getSelectedSensorVelocity(0));
 		SmartDashboard.putNumber("Forklift Position", forkliftMotorLeader.getSelectedSensorPosition(0));
 		
-		SmartDashboard.putString("Selected Autonomous", ((SendableChooser)SmartDashboard.getData("autoChooser")).getSelected().toString());
-//
 //		SmartDashboard.putNumber("Current Forklift Error (in)", forklift.error / Length.in);
 //		SmartDashboard.putNumber("Current Forklift Position (in)", forklift.currentPosition / Length.in);
 //

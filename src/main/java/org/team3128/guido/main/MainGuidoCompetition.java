@@ -84,11 +84,6 @@ public class MainGuidoCompetition extends MainGuido
 		});
 	}
 
-	protected void constructAutoPrograms(SendableChooser<CommandGroup> programChooser)
-	{
-		super.constructAutoPrograms(programChooser);
-	}
-
 	@Override
 	protected void teleopInit()
 	{

@@ -41,15 +41,6 @@ public class MainGuidoPractice extends MainGuido {
 	}
 
 	@Override
-	protected void setupListeners() {
-		super.setupListeners();
-	}
-
-	protected void constructAutoPrograms(SendableChooser<CommandGroup> programChooser) {
-		super.constructAutoPrograms(programChooser);
-	}
-
-	@Override
 	protected void teleopInit() {
 		super.teleopInit();
 		

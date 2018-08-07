@@ -7,10 +7,10 @@ import com.esotericsoftware.minlog.Log;
 
 import org.team3128.common.NarwhalRobot;
 import org.team3128.common.drive.SRXTankDrive;
-import org.team3128.common.drive.pathfinder.Pathfinder;
-import org.team3128.common.drive.pathfinder.ProfilePoint;
-import org.team3128.common.drive.pathfinder.Trajectory;
-import org.team3128.common.drive.pathfinder.Waypoint;
+import org.team3128.common.drive.routemaker.Routemaker;
+import org.team3128.common.drive.routemaker.ProfilePoint;
+import org.team3128.common.drive.routemaker.Trajectory;
+import org.team3128.common.drive.routemaker.Waypoint;
 import org.team3128.common.util.units.Length;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -29,7 +29,7 @@ public class MainGradleTest extends NarwhalRobot {
 		rightDriveMotor = new TalonSRX(11);
 		SRXTankDrive.initialize(leftDriveMotor, rightDriveMotor, 12.6 * Length.in, 1.0, 25 * Length.in, 30 * Length.in, 3800);
 
-		Trajectory t = Pathfinder.generate(200.0, 
+		Trajectory t = Routemaker.generate(200.0, 
 			new Waypoint(0, 0, 90),
 			new Waypoint(6 * Length.ft, 6 * Length.ft, 0),
 			new Waypoint(10 * Length.ft, 8 * Length.ft, 90),
@@ -37,7 +37,7 @@ public class MainGradleTest extends NarwhalRobot {
 		);
 
 		long startTime = System.currentTimeMillis();
-		points = Pathfinder.getProfilePoints(t, 1.5);
+		points = Routemaker.getStaticProfilePoints(t, 1.5);
 
 		//System.out.println(t);
 
