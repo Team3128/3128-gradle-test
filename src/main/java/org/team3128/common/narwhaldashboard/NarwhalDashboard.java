@@ -101,7 +101,9 @@ public class NarwhalDashboard extends WebSocketServer {
         NarwhalDashboard s;
 		try {
             s = new NarwhalDashboard(PORT);
+            s.setReuseAddr(true);
             s.start();
+            
             Log.info("NarwhalDashboard", "Server has started on port " + PORT);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
