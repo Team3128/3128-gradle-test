@@ -414,8 +414,8 @@ public class TankDrive implements ITankDrive
         // Make this return true when this Command no longer needs to run execute()
         protected boolean isFinished()
         {
-        	boolean leftFinished = RobotMath.abs(encLeft.getAngularSpeed()) > completionThreshold;
-        	boolean rightFinished = RobotMath.abs(encRight.getAngularSpeed()) > completionThreshold;
+        	boolean leftFinished = Math.abs(encLeft.getAngularSpeed()) > completionThreshold;
+        	boolean rightFinished = Math.abs(encRight.getAngularSpeed()) > completionThreshold;
         	
         	return leftFinished && rightFinished;
         }

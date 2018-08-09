@@ -874,8 +874,8 @@ public class SRXTankDrive implements ITankDrive
 					"left pos: " + leftMotors.getSelectedSensorPosition(0) + " err: " + leftError
 							+ " deg, right pos: " + rightMotors.getSelectedSensorPosition(0) + " err: " + rightError + " deg.");
 
-			leftDone = leftDist == 0 || RobotMath.abs(leftError) < MOVEMENT_ERROR_THRESHOLD;
-			rightDone = rightDist == 0 || RobotMath.abs(rightError) < MOVEMENT_ERROR_THRESHOLD;
+			leftDone = leftDist == 0 || Math.abs(leftError) < MOVEMENT_ERROR_THRESHOLD;
+			rightDone = rightDist == 0 || Math.abs(rightError) < MOVEMENT_ERROR_THRESHOLD;
 
 			if (isTimedOut())
 			{
