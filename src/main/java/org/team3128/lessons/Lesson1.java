@@ -57,15 +57,12 @@ public class Lesson1 extends NarwhalRobot {
          * Velocity: Explanation here
          * Current: Explanation here
          * Follower: Explanation here
-         * MotionProfile: Explanation here
-         * MotionMagic: Explanation here
-         * MotionProfileArc: Explanation here
          * **/
 
         //set motor to 10% of max output
         victor1.set(ControlMode.PercentOutput, 10);
-        //set motor to a velocity of 0
-        victor2.set(ControlMode.Velocity, 0);
+        //set motor to a velocity of 1 cm / 100 ms
+        victor2.set(ControlMode.Velocity, 1*Length.cm);
 
         //initialization of two TalonSRX motor controllers
         right1 = new TalonSRX(2);
@@ -122,8 +119,8 @@ public class Lesson1 extends NarwhalRobot {
         });
 
 
-		lm.nameControl(new POV(0), "IntakePOV");
-		lm.addListener("IntakePOV", (POVValue pov) ->
+		lm.nameControl(new POV(0), "POV");
+		lm.addListener("POV", (POVValue pov) ->
 		{
 			int val = pov.getDirectionValue();
 
