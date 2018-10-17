@@ -3,7 +3,7 @@ plugins {
     id "edu.wpi.first.GradleRIO" version "2019.0.0-alpha-3"
 }
 
-def ROBOT_CLASS = "org.team3128.gradletest.main.MainNarDashTest"
+def ROBOT_CLASS = "org.team3128.lessons.MyDrive"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project EmbeddedTools.
@@ -48,7 +48,6 @@ dependencies {
     compile navx()
 
     compile 'org.java-websocket:Java-WebSocket:1.3.8'
-
     compile files('lib/kryo-4.0.0.jar')
     compile files('lib/kryo-4.0.0-sources.jar')
     compile files('lib/minlog-info-1.2.jar')

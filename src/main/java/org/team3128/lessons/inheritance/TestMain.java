@@ -8,6 +8,15 @@ public class TestMain{
         is an abstract class, so an object of Animal cannot be made.
         Think about it: In real life, is any animal just an 'animal"?
         */
+        //Animal a=new Animal();
+        
+        Cat cat1 = new Cat();
+        System.out.println("Cat Methods: ");
+        cat1.move();
+        cat1.makeNoise();
+        cat1.makeOffspring();
+
+        System.out.println();
 
         Dog dog1 = new Dog();
         System.out.println("Dog Methods:");

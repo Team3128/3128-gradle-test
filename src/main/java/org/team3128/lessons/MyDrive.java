@@ -16,7 +16,7 @@ import org.team3128.common.listener.controllers.ControllerExtreme3D;
 import org.team3128.common.listener.controltypes.Button;
 import edu.wpi.first.wpilibj.Joystick;
 
-public class Lesson0 extends NarwhalRobot {
+public class MyDrive extends NarwhalRobot {
     //two VictorSPX motor controllers
     VictorSPX victor1;
     VictorSPX victor2;
@@ -48,8 +48,8 @@ public class Lesson0 extends NarwhalRobot {
         Log.info("robot", "constructing harware for the robot!");
 
         //initialization of two VictorSPX motors controller
-        victor1 = new VictorSPX(0);
-        victor2 = new VictorSPX(1);
+        //victor1 = new VictorSPX(0);
+       // victor2 = new VictorSPX(1);
 
         /**There are many ways to tell a motor what to do using 
          * PercentOutput: Explanation here
@@ -60,23 +60,23 @@ public class Lesson0 extends NarwhalRobot {
          * **/
 
         //set motor to 10% of max output
-        victor1.set(ControlMode.PercentOutput, 10);
+        //victor1.set(ControlMode.PercentOutput, 10);
         
         //set motor to a velocity of 1 cm / 100 ms
-        victor2.set(ControlMode.Velocity, 1*Length.cm);
+        //victor2.set(ControlMode.Velocity, 1*Length.cm);
 
         //initialization of two TalonSRX motor controllers
-        right1 = new TalonSRX(2);
-        right2 = new TalonSRX(3);
-        left1 = new TalonSRX(4);
-        left2= new TalonSRX(5);
+        right1 = new TalonSRX(11);
+        //right2 = new TalonSRX(3);
+        left1 = new TalonSRX(10);
+        //left2= new TalonSRX(5);
  
         //lets motors controller know that they will be hooked up to encoder (sensor)
         right1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.CAN_TIMEOUT);
         left1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.CAN_TIMEOUT);
         
-        right2.set(ControlMode.Follower, right1.getDeviceID());
-        left2.set(ControlMode.Follower, left1.getDeviceID());
+        //right2.set(ControlMode.Follower, right1.getDeviceID());
+        //left2.set(ControlMode.Follower, left1.getDeviceID());
 
         //initilization of SRXTankDrive object.
         //hover over the word "initialize" on the line below to learn more about the params
@@ -94,55 +94,34 @@ public class Lesson0 extends NarwhalRobot {
     protected void setupListeners() {
         //designating what each of the parts of the joystick should be called
         //aka the value of the joystick when it is pushed in the y-direction is called "MoveForwards"
-        lm.nameControl(ControllerExtreme3D.JOYY, "MoveForwards");
-		lm.nameControl(ControllerExtreme3D.TWIST, "MoveTurn");
-		lm.nameControl(ControllerExtreme3D.THROTTLE, "Throttle");
+        
+ 
 
         //below you will see lambas i.e. the ()->{} part of the code
         //a lambda essentially pases in part of a function as a parameter rather than a single value
         //I will explain this more somewhere else... or click on the website below for more info
         //https://docs.oracle.com/javase/tutorial/java/javaOO/lambdaexpressions.html
 
-		lm.addMultiListener(() ->
-		{
-			double x = lm.getAxis("MoveForwards");
-			double y = lm.getAxis("MoveTurn");
-			double t = lm.getAxis("Throttle") * -1;
-			drive.arcadeDrive(x, y, t, true);
-		}, "MoveForwards", "MoveTurn", "Throttle");
+lm.nameControl(new Button(10), "RightMotor");
+lm.addButtonDownListener("RightMotor", () -> 
+{
+    right1.set(ControlMode.PercentOutput,50);
+});
+lm.addButtonUpListener("RightMotor", () -> 
+{
+    right1.set(ControlMode.PercentOutput,0);
+});
+lm.nameControl(new Button(8), "LeftMotor");
+lm.addButtonDownListener("LeftMotor", () -> 
+{
+    left1.set(ControlMode.PercentOutput,50);
+});
+lm.addButtonUpListener("LeftMotor", () -> 
+{
+    left1.set(ControlMode.PercentOutput,0);
+});
 
-		lm.nameControl(new Button(2), "Action");
-        lm.addButtonDownListener("Action", () -> 
-        {
-            //do something when button is pushed
-        });
-        lm.addButtonUpListener("Action", () -> 
-        {
-            //do something when button is released
-        });
-
-
-		lm.nameControl(new POV(0), "POV");
-		lm.addListener("POV", (POVValue pov) ->
-		{
-			int val = pov.getDirectionValue();
-
-			switch (val)
-			{
-			case 7:
-			case 8:
-			case 1:
-				//do something
-				break;
-			case 3:
-			case 4:
-			case 5:
-				//do something
-				break;
-			default:
-				//do something
-			}
-		});
+	
     }
 
     @Override
