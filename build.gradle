@@ -3,8 +3,7 @@ plugins {
     id "edu.wpi.first.GradleRIO" version "2019.0.0-alpha-3"
 }
 
-def ROBOT_CLASS = "org.team3128.gradletest.main.MainNarDashTest"
-
+def ROBOT_CLASS = "org.team3128.lessons.ButtonDrive"
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project EmbeddedTools.
 deploy {
@@ -54,6 +53,7 @@ dependencies {
     compile files('lib/minlog-info-1.2.jar')
     compile files('lib/objenesis-2.4.jar')
     compile files('lib/reflectasm-1.09-all.jar')
+    compile files('lib/robot.jar')
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')

@@ -27,5 +27,10 @@ public class TestMain{
         makeNoise() is not defined for the type (of Animal) Seahorse
         Think about it: In real life, is do seahorses make any noise?
         */
+
+        //this is called polymorphism and it will be discussed at a later time
+        //Animal doggo = new Dog();
+        //doggo.makeOffspring();
+        //doggo.makeNoise();
     }
 }

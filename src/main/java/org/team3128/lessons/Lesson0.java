@@ -6,7 +6,7 @@ public class Lesson0 extends NarwhalRobot{
 
     @Override
     protected void constructHardware() {
-
+   
     }
 
     @Override
@@ -23,5 +23,7 @@ public class Lesson0 extends NarwhalRobot{
     protected void autonomousInit() {
 
     }
+
+ 
 
 }
