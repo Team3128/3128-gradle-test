@@ -161,6 +161,7 @@ public class NarwhalDashboard extends WebSocketServer {
 
     @Override
     public void onMessage(WebSocket conn, String message) {
+        Log.info("NarwhalDashboard", message);
         String[] parts = message.split(":");
 
         if (parts[0].equals("selectAuto")) {

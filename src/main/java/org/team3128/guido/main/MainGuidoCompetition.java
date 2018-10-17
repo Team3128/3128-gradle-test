@@ -2,9 +2,11 @@ package org.team3128.guido.main;
 
 import org.team3128.common.hardware.misc.Piston;
 import org.team3128.common.listener.controltypes.Button;
+import org.team3128.common.narwhaldashboard.NarwhalDashboard;
 import org.team3128.common.util.Log;
 import org.team3128.common.util.enums.Direction;
 import org.team3128.common.util.units.Length;
+import org.team3128.guido.autonomous.debug.AutoDriveDistance;
 import org.team3128.guido.util.PlateAllocation;
 
 import edu.wpi.cscore.UsbCamera;
@@ -85,6 +87,15 @@ public class MainGuidoCompetition extends MainGuido
 	}
 
 	@Override
+	protected void constructAutoPrograms() {
+		super.constructAutoPrograms();
+		Log.info("Guido", "constructing auto programs");
+		//programChooser.addDefault("Drive 100", new AutoDriveDistance(this, 100*Length.in));
+	}
+
+
+
+	@Override
 	protected void teleopInit()
 	{
 		invertSetup();
@@ -120,6 +131,9 @@ public class MainGuidoCompetition extends MainGuido
 	protected void updateDashboard()
 	{
 		super.updateDashboard();
+		NarwhalDashboard.addAuto("Drive 100", new AutoDriveDistance(this, 100 * Length.in));
+		NarwhalDashboard.addAuto("Drive 200", new AutoDriveDistance(this, 200*Length.in));
+
 		SmartDashboard.putString("Can Lower Buddy Bar", canDeployBuddyBar + "");
 		
 		SmartDashboard.putNumber("Match Timer", ds.getMatchTime());
