@@ -3,7 +3,8 @@ plugins {
     id "edu.wpi.first.GradleRIO" version "2019.0.0-alpha-3"
 }
 
-def ROBOT_CLASS = "org.team3128.lessons.ButtonDrive"
+def ROBOT_CLASS = "org.team3128.guido.main.MainGuidoCompetition"
+
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project EmbeddedTools.
 deploy {
@@ -14,15 +15,6 @@ deploy {
             // You can use getTeamOrDefault(team) instead of getTeamNumber if you
             // want to store a team number in this file.
             team = getTeamNumber()
-
-            // We had to set a password to access the filesystem, so here it is...
-            locations {
-                ssh {
-                    address = 'roborio-3128-frc.local'
-                    user = 'admin'
-                    password = '3128'
-                }
-            }
         }
     }
     artifacts {
