@@ -14,6 +14,9 @@ public class TestMain{
         dog1.makeOffspring();
         dog1.move();
         dog1.makeNoise();
+        
+        Starfish star1 = new Starfish();
+        star1.move();
 
         System.out.println();
 
