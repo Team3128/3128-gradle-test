@@ -67,6 +67,8 @@ public class Lesson1 extends NarwhalRobot {
         //initialization of two TalonSRX motor controllers
         right1 = new TalonSRX(2);
         right2 = new TalonSRX(3);
+        left1 = new TalonSRX(4);
+        left2 = new TalonSRX(5);
  
         //lets motors controller know that they will be hooked up to encoder (sensor)
         right1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.CAN_TIMEOUT);
@@ -77,7 +79,7 @@ public class Lesson1 extends NarwhalRobot {
 
         //initilization of SRXTankDrive object.
         //hover over the word "initialize" on the line below to learn more about the params
-        SRXTankDrive.initialize(left1, left2, wheelCirc, gearRatio, wheelBase, track,
+        SRXTankDrive.initialize(left1, right1, wheelCirc, gearRatio, wheelBase, track,
 				robotFreeSpeed);
         drive = SRXTankDrive.getInstance();
         
@@ -91,7 +93,7 @@ public class Lesson1 extends NarwhalRobot {
     protected void setupListeners() {
         //designating what each of the parts of the joystick should be called
         //aka the value of the joystick when it is pushed in the y-direction is called "MoveForwards"
-        lm.nameControl(ControllerExtreme3D.JOYY, "MoveForwards");
+        lm.nameControl(ControllerExtreme3D.JOYX, "MoveForwards");
 		lm.nameControl(ControllerExtreme3D.TWIST, "MoveTurn");
 		lm.nameControl(ControllerExtreme3D.THROTTLE, "Throttle");
 
@@ -137,7 +139,8 @@ public class Lesson1 extends NarwhalRobot {
 				//do something
 				break;
 			default:
-				//do something
+                //do something
+                break;
 			}
 		});
     }
