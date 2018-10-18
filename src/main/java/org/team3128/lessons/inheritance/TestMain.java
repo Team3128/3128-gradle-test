@@ -1,7 +1,10 @@
 package org.team3128.lessons.inheritance;
-
+import org.team3128.lessons.inheritance.Bunny;
 public class TestMain{
     public static void main(String[] args){
+        Bunny guido = new Bunny();
+        guido.move();
+        guido.makeOffspring();
         /*
         Animal a = new Animal();
         This line of code throws an error because Animal
@@ -9,6 +12,7 @@ public class TestMain{
         Think about it: In real life, is any animal just an 'animal"?
         */
 
+        /*
         Dog dog1 = new Dog();
         System.out.println("Dog Methods:");
         dog1.makeOffspring();
