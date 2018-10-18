@@ -8,7 +8,7 @@ public class TestMain{
         is an abstract class, so an object of Animal cannot be made.
         Think about it: In real life, is any animal just an 'animal"?
         */
-
+        /*
         Dog dog1 = new Dog();
         System.out.println("Dog Methods:");
         dog1.makeOffspring();
@@ -21,6 +21,14 @@ public class TestMain{
         System.out.println("Seahorse Methods:");
         seahorse.makeOffspring();
         seahorse.move();
+        */
+        Dog dog1 = new Dog();
+        System.out.println("Dog Methods:");
+        dog1.makeOffspring();
+        dog1.move();
+        dog1.makeNoise();
+        //Cat cat1 = new Cat();
+        //cat1.move();
         /*
         seahorse.makeNoise();
         This line of code throws an error because the method
