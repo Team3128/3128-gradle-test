@@ -18,9 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class MainGuidoCompetition extends MainGuido
-{
-	public boolean canDeployBuddyBar;
-	
+{	
 	public MainGuidoCompetition()
 	{
 		super();
@@ -30,9 +28,7 @@ public class MainGuidoCompetition extends MainGuido
 	protected void constructHardware()
 	{
 		auto_delay = 0;
-		
-		canDeployBuddyBar = false;
-		
+				
 		limitSiwtchLocation = 0;
 
 		wheelCirc = 12.6 * Length.in;
@@ -57,8 +53,8 @@ public class MainGuidoCompetition extends MainGuido
 
 		CameraServer cameraServer = CameraServer.getInstance();
 		UsbCamera camera = cameraServer.startAutomaticCapture(0);
-		camera.setFPS(20);
-		camera.setResolution(240, 135);
+		camera.setFPS(10);
+		camera.setResolution(160, 120);
 	}
 
 	@Override
@@ -70,19 +66,12 @@ public class MainGuidoCompetition extends MainGuido
 		listenerLeft.nameControl(new Button(8), "BrakeClimber");
 		listenerLeft.addButtonDownListener("BrakeClimber", () ->
 		{
-			canDeployBuddyBar = true;
 			climberLockPiston.invertPiston();
 		});
 		listenerRight.nameControl(new Button(7), "DeployBar");
 		listenerRight.addButtonDownListener("DeployBar", () ->
 		{
-			if (canDeployBuddyBar)
-			{
 				climberPiston.invertPiston();
-			}
-			else {
-				Log.info("MainGuidoCompetition", "Climber not locked!");
-			}
 		});
 	}
 
@@ -99,7 +88,6 @@ public class MainGuidoCompetition extends MainGuido
 	protected void teleopInit()
 	{
 		invertSetup();
-		canDeployBuddyBar = false;
 
 		super.teleopInit();
 	}
@@ -133,8 +121,6 @@ public class MainGuidoCompetition extends MainGuido
 		super.updateDashboard();
 		NarwhalDashboard.addAuto("Drive 100", new AutoDriveDistance(this, 100 * Length.in));
 		NarwhalDashboard.addAuto("Drive 200", new AutoDriveDistance(this, 200*Length.in));
-
-		SmartDashboard.putString("Can Lower Buddy Bar", canDeployBuddyBar + "");
 		
 		SmartDashboard.putNumber("Match Timer", ds.getMatchTime());
 		SmartDashboard.putBoolean("Alliance Color", ds.getAlliance() == Alliance.Blue);
