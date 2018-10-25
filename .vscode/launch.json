@@ -6,6 +6,28 @@
   "configurations": [
     {
       "type": "java",
+      "name": "CodeLens (Launch) - ThreadDemo",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "stopOnEntry": false,
+      "mainClass": "org.team3128.lessons.threads.ThreadDemo",
+      "args": "",
+      "projectName": "3128-gradle-test"
+    },
+    {
+      "type": "java",
+      "name": "CodeLens (Launch) - BruteForceCracker",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "stopOnEntry": false,
+      "mainClass": "org.team3128.lessons.threads.BruteForceCracker",
+      "args": "",
+      "projectName": "3128-gradle-test"
+    },
+    {
+      "type": "java",
       "name": "CodeLens (Launch) - TestMain",
       "request": "launch",
       "cwd": "${workspaceFolder}",
