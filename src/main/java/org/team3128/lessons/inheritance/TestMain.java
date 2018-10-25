@@ -2,9 +2,12 @@ package org.team3128.lessons.inheritance;
 
 public class TestMain{
     public static void main(String[] args){
-        /*
+        Lion guido = new Lion();
+        guido.move();
+        guido.makeOffspring(); 
+        
         Animal a = new Animal();
-        This line of code throws an error because Animal
+        /*This line of code throws an error because Animal
         is an abstract class, so an object of Animal cannot be made.
         Think about it: In real life, is any animal just an 'animal"?
         */
@@ -32,6 +35,8 @@ public class TestMain{
         /*
         seahorse.makeNoise();
         This line of code throws an error because the method
+        //seahorse.makeNoise();
+        /*This line of code throws an error because the method
         makeNoise() is not defined for the type (of Animal) Seahorse
         Think about it: In real life, is do seahorses make any noise?
         */
