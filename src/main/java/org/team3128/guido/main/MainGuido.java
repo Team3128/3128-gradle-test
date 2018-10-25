@@ -50,7 +50,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class MainGuido extends NarwhalRobot
 {
-	public double auto_delay;
+	public double auto_delay = 0;
 	
 	// Drive Train
 	public double wheelCirc;
@@ -181,7 +181,7 @@ public class MainGuido extends NarwhalRobot
 
 		speedMult = wheelCirc / 409.6 / 100.0;
 		
-		SmartDashboard.putNumber("Autonomous Delay", auto_delay);
+		//SmartDashboard.putNumber("Autonomous Delay", auto_delay);
 
 		NarwhalDashboard.addButton("rezero", (boolean down) -> {
 			if (down) {
@@ -362,8 +362,8 @@ public class MainGuido extends NarwhalRobot
 		PlateAllocation.update();
 		
 		// Oh boy
-		auto_delay = SmartDashboard.getNumber("Autonomous Delay", 0);
-		SmartDashboard.putNumber("Autonomous Delay", auto_delay);
+		//auto_delay = SmartDashboard.getNumber("Autonomous Delay", 0);
+		//SmartDashboard.putNumber("Autonomous Delay", auto_delay);
 		
 //		Debug
 //		
@@ -381,11 +381,11 @@ public class MainGuido extends NarwhalRobot
 //		NarwhalDashboard.addAuto("Forklift Set Scale", new AutoSetForkliftState(this, ForkliftState.SCALE));
 //		NarwhalDashboard.addAuto("Forklift Set Switch", new AutoSetForkliftState(this, ForkliftState.SWITCH));
 //		NarwhalDashboard.addAuto("Forklift Set Floor", new AutoSetForkliftState(this, ForkliftState.GROUND));
-		
+		auto_delay = 0;
 		NarwhalDashboard.addAuto("Cross Auto Line", new AutoCrossBaseline(auto_delay));
 		
 		NarwhalDashboard.addAuto("Center Switch", new AutoSwitchFromCenter(auto_delay));
-		NarwhalDashboard.addAuto("Center Switch x2", new AutoTwoSwitchFromCenter(auto_delay));
+		NarwhalDashboard.addAuto("Center Switch x2", new AutoTwoSwitchFromCenter(0));
 		
 		NarwhalDashboard.addAuto("Right Switch or Scale", new AutoSideSwitchOrScale(Direction.RIGHT, auto_delay));
 		
