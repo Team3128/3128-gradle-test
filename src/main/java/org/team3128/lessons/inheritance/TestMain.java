@@ -21,6 +21,13 @@ public class TestMain{
         System.out.println("Seahorse Methods:");
         seahorse.makeOffspring();
         seahorse.move();
+
+        System.out.println();
+
+        Cat cat = new Cat();
+        System.out.println("Cat Methods:");
+        cat.makeOffspring();
+        cat.move();
         /*
         seahorse.makeNoise();
         This line of code throws an error because the method
