@@ -48,6 +48,11 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
 public class MainGuido extends NarwhalRobot
 {
 	public double auto_delay;
@@ -101,6 +106,7 @@ public class MainGuido extends NarwhalRobot
 	public DriverStation ds;
 	public RobotController rc;
 
+	//NarwhalDasboard 
 	@Override
 	protected void constructHardware()
 	{
