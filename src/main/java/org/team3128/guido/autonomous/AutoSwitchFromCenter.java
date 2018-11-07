@@ -17,9 +17,9 @@ public class AutoSwitchFromCenter extends AutoGuidoBase {
 	public AutoSwitchFromCenter(double delay) {
 		super(delay);
 		
-		if (PlateAllocation.getScale().equals(Direction.RIGHT)) {
-			addSequential(new CmdDelay(5));
-		}
+		// if (PlateAllocation.getScale().equals(Direction.RIGHT)) {
+		// 	addSequential(new CmdDelay(5));
+		// }
 		
 		final double robot_center_offset = PowerUpAutoValues.ROBOT_WIDTH / 2 - PowerUpAutoValues.CENTER_OFFSET;
 

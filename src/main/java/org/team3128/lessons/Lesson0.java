@@ -44,50 +44,7 @@ public class Lesson0 extends NarwhalRobot {
 
     @Override
     protected void constructHardware() {
-        //this is how you print something to the console on the Driver Station
-        Log.info("robot", "constructing harware for the robot!");
 
-        //initialization of two VictorSPX motors controller
-        victor1 = new VictorSPX(0);
-        victor2 = new VictorSPX(1);
-
-        /**There are many ways to tell a motor what to do using 
-         * PercentOutput: Explanation here
-         * Position: Explanation here
-         * Velocity: Explanation here
-         * Current: Explanation here
-         * Follower: Explanation here
-         * **/
-
-        //set motor to 10% of max output
-        victor1.set(ControlMode.PercentOutput, 10);
-        
-        //set motor to a velocity of 1 cm / 100 ms
-        victor2.set(ControlMode.Velocity, 1*Length.cm);
-
-        //initialization of two TalonSRX motor controllers
-        right1 = new TalonSRX(2);
-        right2 = new TalonSRX(3);
-        left1 = new TalonSRX(4);
-        left2= new TalonSRX(5);
- 
-        //lets motors controller know that they will be hooked up to encoder (sensor)
-        right1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.CAN_TIMEOUT);
-        left1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.CAN_TIMEOUT);
-        
-        right2.set(ControlMode.Follower, right1.getDeviceID());
-        left2.set(ControlMode.Follower, left1.getDeviceID());
-
-        //initilization of SRXTankDrive object.
-        //hover over the word "initialize" on the line below to learn more about the params
-        SRXTankDrive.initialize(left1, left2, wheelCirc, gearRatio, wheelBase, track,
-				robotFreeSpeed);
-        drive = SRXTankDrive.getInstance();
-        
-        //initialization of joystick and listener manager
-        joystick = new Joystick(1);
-		lm = new ListenerManager(joystick);
-		addListenerManager(lm);
     }
 
     @Override
@@ -152,4 +109,5 @@ public class Lesson0 extends NarwhalRobot {
     @Override
     protected void autonomousInit() {
     }
+
 }
