@@ -9,6 +9,7 @@ import org.team3128.guido.autonomous.AutoSwitchFromSide;
 import org.team3128.guido.autonomous.AutoTwoScaleFromSide;
 import org.team3128.guido.autonomous.AutoTwoSwitchFromCenter;
 import org.team3128.guido.autonomous.debug.AutoArcTurn;
+import org.team3128.guido.autonomous.PolygonAuto;
 
 import org.team3128.guido.mechanisms.Forklift;
 import org.team3128.guido.mechanisms.Forklift.ForkliftState;
@@ -348,7 +349,6 @@ public class MainGuido extends NarwhalRobot
 //		NarwhalDashboard.addAuto("Forklift Set Floor", new AutoSetForkliftState(this, ForkliftState.GROUND));
 		
 		NarwhalDashboard.addAuto("Cross Auto Line", new AutoCrossBaseline(auto_delay));
-		
 		NarwhalDashboard.addAuto("Center Switch", new AutoSwitchFromCenter(auto_delay));
 		NarwhalDashboard.addAuto("Center Switch x2", new AutoTwoSwitchFromCenter(auto_delay));
 		
@@ -361,6 +361,7 @@ public class MainGuido extends NarwhalRobot
 		NarwhalDashboard.addAuto("Right Scale Two", new AutoTwoScaleFromSide(Direction.RIGHT, auto_delay));
 
 		NarwhalDashboard.addAuto("Right Scale Switch", new AutoScaleSwitchFromRight(Direction.RIGHT, auto_delay));
+		NarwhalDashboard.addAuto("Polygon Auto", new PolygonAuto(0));
 	}
 
 	@Override
