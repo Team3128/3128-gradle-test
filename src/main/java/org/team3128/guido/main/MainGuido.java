@@ -8,6 +8,7 @@ import org.team3128.guido.autonomous.AutoSwitchFromCenter;
 import org.team3128.guido.autonomous.AutoSwitchFromSide;
 import org.team3128.guido.autonomous.AutoTwoScaleFromSide;
 import org.team3128.guido.autonomous.AutoTwoSwitchFromCenter;
+import org.team3128.guido.autonomous.AutoTyler;
 import org.team3128.guido.autonomous.debug.AutoArcTurn;
 import org.team3128.guido.autonomous.debug.AutoDriveDistance;
 import org.team3128.guido.mechanisms.Forklift;
@@ -386,7 +387,7 @@ public class MainGuido extends NarwhalRobot
 		
 		NarwhalDashboard.addAuto("Center Switch", new AutoSwitchFromCenter(auto_delay));
 		NarwhalDashboard.addAuto("Center Switch x2", new AutoTwoSwitchFromCenter(0));
-		
+		NarwhalDashboard.addAuto("Tyler's Auto", new AutoTyler(0));
 		NarwhalDashboard.addAuto("Right Switch or Scale", new AutoSideSwitchOrScale(Direction.RIGHT, auto_delay));
 		
 		NarwhalDashboard.addAuto("Left Switch", new AutoSwitchFromSide(Direction.LEFT, auto_delay));

@@ -6,7 +6,7 @@ public class TestMain{
         guido.move();
         guido.makeOffspring(); 
         
-        Animal a = new Animal();
+       // Animal a = new Animal();
         /*This line of code throws an error because Animal
         is an abstract class, so an object of Animal cannot be made.
         Think about it: In real life, is any animal just an 'animal"?
