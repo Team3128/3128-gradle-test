@@ -1,16 +1,16 @@
 package org.team3128.lessons.threads;
 
-import org.jointheleague.graphical.robot.Robot;
+//import org.jointheleague.graphical.robot.Robot;
 
 public class ThreadDemo {
 	public static void main(String[] args) {
-			Robot timmy = new Robot(400, 700);
-			Robot tammy = new Robot(800, 700);
-			Robot sammy = new Robot(1200, 700);
+		/*	//Robot timmy = new Robot(400, 700);
+			//Robot tammy = new Robot(800, 700);
+			//Robot sammy = new Robot(1200, 700);
 
-			timmy.setSpeed(10);
-			tammy.setSpeed(10);
-			sammy.setSpeed(10);
+			//timmy.setSpeed(10);
+			//tammy.setSpeed(10);
+			//sammy.setSpeed(10);
 			
 			timmy.move(400);
 			tammy.move(400);
@@ -27,6 +27,6 @@ public class ThreadDemo {
 			r1.start();
 			r2.start();
 			r3.start();
-			
+			*/
 	}
 }
