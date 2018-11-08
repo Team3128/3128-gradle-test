@@ -120,7 +120,7 @@ public class MainGuido extends NarwhalRobot
 		leftDriveFollower.set(ControlMode.Follower, leftDriveLeader.getDeviceID());
 		rightDriveFollower.set(ControlMode.Follower, rightDriveLeader.getDeviceID());
 
-		gyro = new ADXRS450_Gyro();
+		//gyro = new ADXRS450_Gyro();
 		
 		// create SRXTankDrive
 		SRXTankDrive.initialize(leftDriveLeader, rightDriveLeader, wheelCirc, 1, 25.25 * Length.in, 30.5 * Length.in,
@@ -361,6 +361,7 @@ public class MainGuido extends NarwhalRobot
 		NarwhalDashboard.addAuto("Right Scale Two", new AutoTwoScaleFromSide(Direction.RIGHT, auto_delay));
 
 		NarwhalDashboard.addAuto("Right Scale Switch", new AutoScaleSwitchFromRight(Direction.RIGHT, auto_delay));
+		
 		NarwhalDashboard.addAuto("Polygon Auto", new PolygonAuto(0));
 	}
 

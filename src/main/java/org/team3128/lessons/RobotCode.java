@@ -22,9 +22,9 @@ import org.team3128.guido.autonomous.PolygonAuto;
 public class RobotCode extends NarwhalRobot {
 
     TalonSRX right1;
-    //TalonSRX right2;
+    TalonSRX right2;
     TalonSRX left1;
-    //TalonSRX left2;
+    TalonSRX left2;
 
 	public ListenerManager lm;
 
@@ -36,17 +36,17 @@ public class RobotCode extends NarwhalRobot {
     protected void constructHardware() {
         Log.info("Jude's Code", "The code works");
         right1 = new TalonSRX(11);
-        //right2 = new TalonSRX(3);
+        right2 = new TalonSRX(3);
         left1 = new TalonSRX(10);
-        //left2 = new TalonSRX(5);
+        left2 = new TalonSRX(5);
  
         right1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.CAN_TIMEOUT);
         left1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.CAN_TIMEOUT);
 
         SRXTankDrive.initialize(left1, right1, 20, 1, 25.25 * Length.in, 30.5 * Length.in, 20);
 		drive = SRXTankDrive.getInstance();
-        //right2.set(ControlMode.Follower, right1.getDeviceID());
-        //left2.set(ControlMode.Follower, left1.getDeviceID());
+        right2.set(ControlMode.Follower, right1.getDeviceID());
+        left2.set(ControlMode.Follower, left1.getDeviceID());
 
         joystick = new Joystick(0);
 		lm = new ListenerManager(joystick);
