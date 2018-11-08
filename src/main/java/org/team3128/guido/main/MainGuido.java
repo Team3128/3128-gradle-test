@@ -106,7 +106,6 @@ public class MainGuido extends NarwhalRobot
 	public DriverStation ds;
 	public RobotController rc;
 
-	//NarwhalDasboard 
 	@Override
 	protected void constructHardware()
 	{
@@ -428,7 +427,6 @@ public class MainGuido extends NarwhalRobot
 	@Override
 	protected void updateDashboard()
 	{	
-		
 //		SmartDashboard.putNumber("Forklift Velocity", forkliftMotorLeader.getSelectedSensorVelocity(0));
 		SmartDashboard.putNumber("Forklift Position", forkliftMotorLeader.getSelectedSensorPosition(0));
 		

@@ -1,7 +1,12 @@
 package org.team3128.guido.main;
 
+import com.ctre.phoenix.ErrorCode;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
 import org.team3128.common.hardware.misc.Piston;
 import org.team3128.common.listener.controltypes.Button;
+import org.team3128.common.narwhaldashboard.NarwhalDashboard;
 import org.team3128.common.util.Log;
 import org.team3128.common.util.enums.Direction;
 import org.team3128.common.util.units.Length;
@@ -118,8 +123,17 @@ public class MainGuidoCompetition extends MainGuido
 
 	@Override
 	protected void updateDashboard()
-	{
+	{ 
 		super.updateDashboard();
+
+		//suite
+		TalonSRX rightMotors = drive.getRightMotors();
+		rightMotors.set(ControlMode.PercentOutput, 100);
+		ErrorCode code = rightMotors.setSelectedSensorPosition(1,0,1000); 
+		String strCode = String.valueOf(code);
+		Log.info("errorCode", strCode);
+		NarwhalDashboard.put("errorCode", strCode);
+
 		SmartDashboard.putString("Can Lower Buddy Bar", canDeployBuddyBar + "");
 		
 		SmartDashboard.putNumber("Match Timer", ds.getMatchTime());
