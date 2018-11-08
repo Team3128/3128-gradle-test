@@ -330,7 +330,7 @@ public class MainGuido extends NarwhalRobot
 		// Oh boy
 		auto_delay = SmartDashboard.getNumber("Autonomous Delay", 0);
 		SmartDashboard.putNumber("Autonomous Delay", auto_delay);
-		
+		/*
 //		Debug
 //		
 //		NarwhalDashboard.addAuto("Drive 50 Inches", new AutoDriveDistance(this, 50 * Length.in));
@@ -361,7 +361,7 @@ public class MainGuido extends NarwhalRobot
 		NarwhalDashboard.addAuto("Right Scale Two", new AutoTwoScaleFromSide(Direction.RIGHT, auto_delay));
 
 		NarwhalDashboard.addAuto("Right Scale Switch", new AutoScaleSwitchFromRight(Direction.RIGHT, auto_delay));
-		
+		*/
 		NarwhalDashboard.addAuto("Polygon Auto", new PolygonAuto(0));
 	}
 
