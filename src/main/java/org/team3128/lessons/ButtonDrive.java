@@ -46,7 +46,8 @@ public class ButtonDrive extends NarwhalRobot {
    protected void constructHardware() {
        //this is how you print something to the console on the Driver Station
        Log.info("robot", "constructing harware for the robot!");
-
+    
+     
        //initialization of two VictorSPX motors controller
        //victor1 = new VictorSPX(0);
       // victor2 = new VictorSPX(1);
