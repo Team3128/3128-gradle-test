@@ -6,6 +6,28 @@
   "configurations": [
     {
       "type": "java",
+      "name": "CodeLens (Launch) - ThanosEmotion",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "stopOnEntry": false,
+      "mainClass": "org.team3128.lessons.ThanosEmotion",
+      "args": "",
+      "projectName": "3128-gradle-test"
+    },
+    {
+      "type": "java",
+      "name": "CodeLens (Launch) - Randomtesting",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "stopOnEntry": false,
+      "mainClass": "org.team3128.lessons.Randomtesting",
+      "args": "",
+      "projectName": "3128-gradle-test"
+    },
+    {
+      "type": "java",
       "name": "CodeLens (Launch) - BruteForceCracker",
       "request": "launch",
       "cwd": "${workspaceFolder}",
