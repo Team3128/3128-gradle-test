@@ -9,6 +9,7 @@ import org.team3128.guido.autonomous.AutoSwitchFromSide;
 import org.team3128.guido.autonomous.AutoTwoScaleFromSide;
 import org.team3128.guido.autonomous.AutoTwoSwitchFromCenter;
 import org.team3128.guido.autonomous.AutoTyler;
+import org.team3128.guido.autonomous.ForkliftAuto;
 import org.team3128.guido.autonomous.debug.AutoArcTurn;
 import org.team3128.guido.autonomous.debug.AutoDriveDistance;
 import org.team3128.guido.mechanisms.Forklift;
@@ -128,7 +129,7 @@ public class MainGuido extends NarwhalRobot
 		leftDriveFollower.set(ControlMode.Follower, leftDriveLeader.getDeviceID());
 		rightDriveFollower.set(ControlMode.Follower, rightDriveLeader.getDeviceID());
 
-		gyro = new ADXRS450_Gyro();
+		//gyro = new ADXRS450_Gyro();
 		
 		// create SRXTankDrive
 		SRXTankDrive.initialize(leftDriveLeader, rightDriveLeader, wheelCirc, 1, 25.25 * Length.in, 30.5 * Length.in,
@@ -376,19 +377,20 @@ public class MainGuido extends NarwhalRobot
 //		NarwhalDashboard.addAuto("Test Smooth", new AutoTestSmooth(this));
 //		NarwhalDashboard.addAuto("Test Not Smooth", new AutoTestNotSmooth(this));
 //		
-		NarwhalDashboard.addAuto("Arc Turn Forwards", new AutoArcTurn(this, 90 * Angle.DEGREES, Direction.RIGHT));
-		NarwhalDashboard.addAuto("Arc Turn Backwards", new AutoArcTurn(this, -90 * Angle.DEGREES, Direction.LEFT));
+		//NarwhalDashboard.addAuto("Arc Turn Forwards", new AutoArcTurn(this, 90 * Angle.DEGREES, Direction.RIGHT));
+		//NarwhalDashboard.addAuto("Arc Turn Backwards", new AutoArcTurn(this, -90 * Angle.DEGREES, Direction.LEFT));
 //		
 //		NarwhalDashboard.addAuto("Forklift Set Scale", new AutoSetForkliftState(this, ForkliftState.SCALE));
 //		NarwhalDashboard.addAuto("Forklift Set Switch", new AutoSetForkliftState(this, ForkliftState.SWITCH));
 //		NarwhalDashboard.addAuto("Forklift Set Floor", new AutoSetForkliftState(this, ForkliftState.GROUND));
 		auto_delay = 0;
-		NarwhalDashboard.addAuto("Cross Auto Line", new AutoCrossBaseline(auto_delay));
+		/*NarwhalDashboard.addAuto("Cross Auto Line", new AutoCrossBaseline(auto_delay));
 		
 		NarwhalDashboard.addAuto("Center Switch", new AutoSwitchFromCenter(auto_delay));
-		NarwhalDashboard.addAuto("Center Switch x2", new AutoTwoSwitchFromCenter(0));
+		NarwhalDashboard.addAuto("Center Switch x2", new AutoTwoSwitchFromCenter(0));*/
 		NarwhalDashboard.addAuto("Tyler's Auto", new AutoTyler(0));
-		NarwhalDashboard.addAuto("Right Switch or Scale", new AutoSideSwitchOrScale(Direction.RIGHT, auto_delay));
+		NarwhalDashboard.addAuto("Forklift Auto", new ForkliftAuto(0));
+		/*NarwhalDashboard.addAuto("Right Switch or Scale", new AutoSideSwitchOrScale(Direction.RIGHT, auto_delay));
 		
 		NarwhalDashboard.addAuto("Left Switch", new AutoSwitchFromSide(Direction.LEFT, auto_delay));
 		
@@ -397,6 +399,7 @@ public class MainGuido extends NarwhalRobot
 		NarwhalDashboard.addAuto("Right Scale Two", new AutoTwoScaleFromSide(Direction.RIGHT, auto_delay));
 
 		NarwhalDashboard.addAuto("Right Scale Switch", new AutoScaleSwitchFromRight(Direction.RIGHT, auto_delay));
+	*/
 	}
 
 	@Override

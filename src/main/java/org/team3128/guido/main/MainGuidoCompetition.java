@@ -119,9 +119,9 @@ public class MainGuidoCompetition extends MainGuido
 	protected void updateDashboard()
 	{
 		super.updateDashboard();
-		NarwhalDashboard.addAuto("Drive 100", new AutoDriveDistance(this, 100 * Length.in));
-		NarwhalDashboard.addAuto("Drive 200", new AutoDriveDistance(this, 200*Length.in));
-		
+		//NarwhalDashboard.addAuto("Drive 100", new AutoDriveDistance(this, 100 * Length.in));
+		//NarwhalDashboard.addAuto("Drive 200", new AutoDriveDistance(this, 200*Length.in));
+		//NarwhalDashboard.addAuto("Forklift Auto", new ForkliftAuto(0));
 		SmartDashboard.putNumber("Match Timer", ds.getMatchTime());
 		SmartDashboard.putBoolean("Alliance Color", ds.getAlliance() == Alliance.Blue);
 		

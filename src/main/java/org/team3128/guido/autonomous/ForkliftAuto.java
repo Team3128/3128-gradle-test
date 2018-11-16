@@ -18,25 +18,24 @@ import org.team3128.guido.util.PlateAllocation;
 
 import org.team3128.guido.autonomous.util.PowerUpAutoValues;
 
-public class AutoTyler extends AutoGuidoBase
+public class ForkliftAuto extends AutoGuidoBase
 {
-    public int sides=4;
-    public float angle=((sides-2)*180)/sides;
-    public AutoTyler(double delay)
+   public ForkliftAuto(double delay)
 	{
         
         super(delay);
-        for (int i=0;i<sides;i++){
-            Log.info("tyler", "eeeeeeeeeee");
-            addSequential(
-					drive.new CmdMoveForward(3 * Length.ft, 1500, 0.75)
-					//forklift.new CmdRunIntake(IntakeState.INTAKE, 1500)
-            );
-           // Timer.delay(5);
-            addSequential(drive.new CmdInPlaceTurn(angle, 1.0, 5000, Direction.RIGHT));
-           // Timer.delay(5);
-        }
-           // Log.info("tyler", "It didn't fail that bad");
+        /*addSequential(new CmdRunInParallel(
+				forklift.new CmdSetForkliftPosition(ForkliftState.GROUND)
+            ));
+            Timer.delay(3);*/
+        addSequential(new CmdRunInParallel(
+			forklift.new CmdSetForkliftPosition(ForkliftState.SWITCH)
+        ));
+        Timer.delay(3);
+        addSequential(new CmdRunInParallel(
+				forklift.new CmdSetForkliftPosition(ForkliftState.GROUND)
+        ));
+       
             
     }
 }
