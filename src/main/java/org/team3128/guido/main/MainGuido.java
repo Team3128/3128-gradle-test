@@ -10,6 +10,7 @@ import org.team3128.guido.autonomous.AutoTwoScaleFromSide;
 import org.team3128.guido.autonomous.AutoTwoSwitchFromCenter;
 import org.team3128.guido.autonomous.debug.AutoArcTurn;
 import org.team3128.guido.autonomous.PolygonAuto;
+import org.team3128.guido.autonomous.AutoMoveForklift;
 
 import org.team3128.guido.mechanisms.Forklift;
 import org.team3128.guido.mechanisms.Forklift.ForkliftState;
@@ -341,7 +342,7 @@ public class MainGuido extends NarwhalRobot
 //		NarwhalDashboard.addAuto("Test Smooth", new AutoTestSmooth(this));
 //		NarwhalDashboard.addAuto("Test Not Smooth", new AutoTestNotSmooth(this));
 //		
-		NarwhalDashboard.addAuto("Arc Turn Forwards", new AutoArcTurn(this, 90 * Angle.DEGREES, Direction.RIGHT));
+		/*NarwhalDashboard.addAuto("Arc Turn Forwards", new AutoArcTurn(this, 90 * Angle.DEGREES, Direction.RIGHT));
 		NarwhalDashboard.addAuto("Arc Turn Backwards", new AutoArcTurn(this, -90 * Angle.DEGREES, Direction.LEFT));
 //		
 //		NarwhalDashboard.addAuto("Forklift Set Scale", new AutoSetForkliftState(this, ForkliftState.SCALE));
@@ -360,9 +361,11 @@ public class MainGuido extends NarwhalRobot
 		
 		NarwhalDashboard.addAuto("Right Scale Two", new AutoTwoScaleFromSide(Direction.RIGHT, auto_delay));
 
-		NarwhalDashboard.addAuto("Right Scale Switch", new AutoScaleSwitchFromRight(Direction.RIGHT, auto_delay));
+		NarwhalDashboard.addAuto("Right Scale Switch", new AutoScaleSwitchFromRight(Direction.RIGHT, auto_delay));*/
 		
 		NarwhalDashboard.addAuto("Polygon Auto", new PolygonAuto(0));
+
+		NarwhalDashboard.addAuto("Forklift Auto", new AutoMoveForklift(0));
 	}
 
 	@Override

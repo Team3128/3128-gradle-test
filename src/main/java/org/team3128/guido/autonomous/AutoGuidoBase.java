@@ -16,7 +16,7 @@ public class AutoGuidoBase extends CommandGroup {
 
 	protected AutoGuidoBase(double delay) {
 		drive = SRXTankDrive.getInstance();
-		//forklift = Forklift.getInstance();
+		forklift = Forklift.getInstance();
 		//intake = Intake.getInstance();
 
 		//addSequential(forklift.new CmdZeroForklift());	
