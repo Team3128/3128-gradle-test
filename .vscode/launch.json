@@ -6,12 +6,20 @@
   "configurations": [
     {
       "type": "java",
+<<<<<<< HEAD
       "name": "CodeLens (Launch) - ThreadDemo",
+=======
+      "name": "CodeLens (Launch) - forklift",
+>>>>>>> 5b2f677e1f1137cf5c82c080591307e2cfe40e03
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "console": "internalConsole",
       "stopOnEntry": false,
+<<<<<<< HEAD
       "mainClass": "org.team3128.lessons.threads.ThreadDemo",
+=======
+      "mainClass": "org.team3128.lessons.forklift",
+>>>>>>> 5b2f677e1f1137cf5c82c080591307e2cfe40e03
       "args": "",
       "projectName": "3128-gradle-test"
     },
@@ -28,6 +36,20 @@
     },
     {
       "type": "java",
+<<<<<<< HEAD
+=======
+      "name": "CodeLens (Launch) - ThreadDemo",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole",
+      "stopOnEntry": false,
+      "mainClass": "org.team3128.lessons.threads.ThreadDemo",
+      "args": "",
+      "projectName": "3128-gradle-test"
+    },
+    {
+      "type": "java",
+>>>>>>> 5b2f677e1f1137cf5c82c080591307e2cfe40e03
       "name": "CodeLens (Launch) - TestMain",
       "request": "launch",
       "cwd": "${workspaceFolder}",

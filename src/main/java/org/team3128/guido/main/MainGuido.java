@@ -8,8 +8,9 @@ import org.team3128.guido.autonomous.AutoSwitchFromCenter;
 import org.team3128.guido.autonomous.AutoSwitchFromSide;
 import org.team3128.guido.autonomous.AutoTwoScaleFromSide;
 import org.team3128.guido.autonomous.AutoTwoSwitchFromCenter;
+import org.team3128.guido.autonomous.AutoTyler;
 import org.team3128.guido.autonomous.debug.AutoArcTurn;
-
+import org.team3128.guido.autonomous.debug.AutoDriveDistance;
 import org.team3128.guido.mechanisms.Forklift;
 import org.team3128.guido.mechanisms.Forklift.ForkliftState;
 import org.team3128.guido.mechanisms.Intake;
@@ -50,7 +51,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class MainGuido extends NarwhalRobot
 {
-	public double auto_delay;
+	public double auto_delay = 0;
 	
 	// Drive Train
 	public double wheelCirc;
@@ -100,6 +101,14 @@ public class MainGuido extends NarwhalRobot
 	
 	public DriverStation ds;
 	public RobotController rc;
+
+	public double forkliftHeight = 0;
+	public double linearSpeed = 0;
+
+	public final double lowGearRatio = 8 + 1.0/3;
+	public final double highGearRatio = 3 + 2.0/3;
+
+	public double speedMult;
 
 	@Override
 	protected void constructHardware()
@@ -170,8 +179,34 @@ public class MainGuido extends NarwhalRobot
 		addListenerManager(listenerRight);
 
 		ds = DriverStation.getInstance();
+
+		speedMult = wheelCirc / 409.6 / 100.0;
 		
-		SmartDashboard.putNumber("Autonomous Delay", auto_delay);
+		//SmartDashboard.putNumber("Autonomous Delay", auto_delay);
+
+		NarwhalDashboard.addButton("rezero", (boolean down) -> {
+			if (down) {
+				forklift.override = true;
+				forklift.powerControl(-0.5);
+			}
+			else {
+				forkliftMotorLeader.setSelectedSensorPosition(0, 0, Constants.CAN_TIMEOUT);
+				forklift.powerControl(0);
+				forklift.override = false;
+			}
+		});
+
+		NarwhalDashboard.addButton("start_compress", (boolean down) -> {
+			if (down) {
+				compressor.start();
+			}
+		});
+
+		NarwhalDashboard.addButton("stop_compress", (boolean down) -> {
+			if (down) {
+				compressor.stop();
+			}
+		});
 	}
 
 	@Override
@@ -324,11 +359,12 @@ public class MainGuido extends NarwhalRobot
 	@Override
 	protected void constructAutoPrograms()
 	{
+		Log.info("Guidoooooooo", "main construct autos");
 		PlateAllocation.update();
 		
 		// Oh boy
-		auto_delay = SmartDashboard.getNumber("Autonomous Delay", 0);
-		SmartDashboard.putNumber("Autonomous Delay", auto_delay);
+		//auto_delay = SmartDashboard.getNumber("Autonomous Delay", 0);
+		//SmartDashboard.putNumber("Autonomous Delay", auto_delay);
 		
 //		Debug
 //		
@@ -346,12 +382,12 @@ public class MainGuido extends NarwhalRobot
 //		NarwhalDashboard.addAuto("Forklift Set Scale", new AutoSetForkliftState(this, ForkliftState.SCALE));
 //		NarwhalDashboard.addAuto("Forklift Set Switch", new AutoSetForkliftState(this, ForkliftState.SWITCH));
 //		NarwhalDashboard.addAuto("Forklift Set Floor", new AutoSetForkliftState(this, ForkliftState.GROUND));
-		
+		auto_delay = 0;
 		NarwhalDashboard.addAuto("Cross Auto Line", new AutoCrossBaseline(auto_delay));
 		
 		NarwhalDashboard.addAuto("Center Switch", new AutoSwitchFromCenter(auto_delay));
-		NarwhalDashboard.addAuto("Center Switch x2", new AutoTwoSwitchFromCenter(auto_delay));
-		
+		NarwhalDashboard.addAuto("Center Switch x2", new AutoTwoSwitchFromCenter(0));
+		NarwhalDashboard.addAuto("Tyler's Auto", new AutoTyler(0));
 		NarwhalDashboard.addAuto("Right Switch or Scale", new AutoSideSwitchOrScale(Direction.RIGHT, auto_delay));
 		
 		NarwhalDashboard.addAuto("Left Switch", new AutoSwitchFromSide(Direction.LEFT, auto_delay));
@@ -382,7 +418,6 @@ public class MainGuido extends NarwhalRobot
 		}
 		else
 		{
-
 			Log.info("MainGuido", "Log: Gearshift is in Low Gear");
 
 		}
@@ -423,8 +458,20 @@ public class MainGuido extends NarwhalRobot
 	protected void updateDashboard()
 	{	
 		
+        NarwhalDashboard.put("time", DriverStation.getInstance().getMatchTime());
+		NarwhalDashboard.put("voltage", RobotController.getBatteryVoltage());
+		
+        SmartDashboard.putNumber("left nu/100ms", rightDriveLeader.getSelectedSensorVelocity(0));
+
+		NarwhalDashboard.put("speed",
+			speedMult * Math.abs(0.5*(rightDriveLeader.getSelectedSensorVelocity(0) + leftDriveLeader.getSelectedSensorVelocity(0)))
+		);
+		
+		forkliftHeight = 10.25/12.0 + forkliftMotorLeader.getSelectedSensorPosition(0) / 262.95 / 12;
+		NarwhalDashboard.put("height", forkliftHeight);
+
 //		SmartDashboard.putNumber("Forklift Velocity", forkliftMotorLeader.getSelectedSensorVelocity(0));
-		SmartDashboard.putNumber("Forklift Position", forkliftMotorLeader.getSelectedSensorPosition(0));
+//		SmartDashboard.putNumber("Forklift Position", forkliftMotorLeader.getSelectedSensorPosition(0));
 		
 //		SmartDashboard.putNumber("Current Forklift Error (in)", forklift.error / Length.in);
 //		SmartDashboard.putNumber("Current Forklift Position (in)", forklift.currentPosition / Length.in);
@@ -439,20 +486,18 @@ public class MainGuido extends NarwhalRobot
 //		
 //		SmartDashboard.putNumber("Left Motor Output", leftDriveLeader.getMotorOutputPercent());
 //		SmartDashboard.putNumber("Right Motor Output", rightDriveLeader.getMotorOutputPercent());
-//
 //		
-//		SmartDashboard.putString("Forklift Control Mode", forklift.controlMode.getName());
-		
-		
-		if (drive.isInHighGear())
-		{
-			SmartDashboard.putString("Gear", "HIGH GEAR");
-		}
-		else
-		{
-			SmartDashboard.putString("Gear", "LOW GEAR");
-		}
-		
+//		SmartDashboard.putString("Forklift Control Mode", forklift.controlMode.getName());		
+//		
+//		if (drive.isInHighGear())
+//		{
+//			SmartDashboard.putString("Gear", "HIGH GEAR");
+//		}
+//		else
+//		{
+//			SmartDashboard.putString("Gear", "LOW GEAR");
+//		}
+//
 //		SmartDashboard.putNumber("Battery Voltage", PowerJNI.getVinVoltage());
 	}
 }

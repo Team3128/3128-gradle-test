@@ -1,7 +1,11 @@
 package org.team3128.lessons.threads;
 
 import org.jointheleague.graphical.robot.Robot;
+<<<<<<< HEAD
 //import robot;
+=======
+
+>>>>>>> 5b2f677e1f1137cf5c82c080591307e2cfe40e03
 public class ThreadDemo {
 	public static void main(String[] args) {
 			Robot timmy = new Robot(400, 700);
