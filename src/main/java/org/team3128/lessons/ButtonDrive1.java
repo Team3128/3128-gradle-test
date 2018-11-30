@@ -32,7 +32,7 @@ public class ButtonDrive1 extends NarwhalRobot{
     TalonSRX left2;
     TalonSRX right1;
     TalonSRX right2;
-    SRXTankDrive drive;
+    //SRXTankDrive drive;
     VictorSPX victor2;
    public SRXTankDrive drive;
    double wheelCirc = 0.0*Length.in;
@@ -45,12 +45,12 @@ public class ButtonDrive1 extends NarwhalRobot{
     @Override
     protected void constructHardware() {
         //VictorSPX victor1 = new VictorSPX(0);
-        TalonSRX left1 = new TalonSRX(0);
-        TalonSRX right1 = new TalonSRX(1);
-        double wheelCirc = 5.0*Length.in;
+        TalonSRX left1 = new TalonSRX(10);
+        TalonSRX right1 = new TalonSRX(11);
+        //double wheelCirc = 5.0*Length.in;
         right1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.CAN_TIMEOUT);
         left1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.CAN_TIMEOUT);
-        SRXTankDrive.initialize(left1, left2, wheelCirc, gearRatio, wheelBase, track,
+        SRXTankDrive.initialize(left1, right1, wheelCirc, gearRatio, wheelBase, track,
                 robotFreeSpeed);
        drive = SRXTankDrive.getInstance();
        joystick = new Joystick(1);
@@ -87,6 +87,6 @@ public class ButtonDrive1 extends NarwhalRobot{
 
     @Override
     protected void teleopInit() {
-        
+            
     }
 }

@@ -7,7 +7,7 @@
 // Pro-tip: Do not include the creation of the threads as part of the time. 
 package org.team3128.lessons.threads;
 
-import org.jointheleague.graphical.robot.Robot;
+//import org.jointheleague.graphical.robot.Robot;
 import java.util.Random;
 
 public class BruteForceCracker {
