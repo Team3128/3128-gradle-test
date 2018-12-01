@@ -115,17 +115,17 @@ public class ListenerManager
 	
 	/**
 	 * Associate a name with the given control  Throws if the name is already in use.
-	 * @param control
+	 * @param button
 	 * @param name
 	 */
-	public void nameControl(Control control, String name)
+	public void nameControl(edu.wpi.first.wpilibj.buttons.Button button, String name)
 	{
-		if(controlNames.containsKey(control))
+		if(controlNames.containsKey(button))
 		{
 			throw new IllegalArgumentException("This control already has a name!");
 		}
 		
-		controlNames.put(name, control);
+		controlNames.put(name, button);
 	}
 
 	/**
