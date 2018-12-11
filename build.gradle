@@ -3,8 +3,8 @@ plugins {
     id "edu.wpi.first.GradleRIO" version "2019.0.0-alpha-3"
 }
 
-def ROBOT_CLASS = "org.team3128.guido.main.MainGuidoCompetition"
-
+def ROBOT_CLASS = "org.team3128.lessons.ButtonDrive"
+//def ROBOT_CLASS = "org.team3128.guido.main.MainGuido"
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project EmbeddedTools.
 deploy {

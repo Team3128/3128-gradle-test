@@ -369,12 +369,12 @@ public class MainGuido extends NarwhalRobot
 //		
 //		NarwhalDashboard.addAuto("Drive 50 Inches", new AutoDriveDistance(this, 50 * Length.in));
 //		NarwhalDashboard.addAuto("Drive 75 Inches", new AutoDriveDistance(this, 75 * Length.in));
-//		NarwhalDashboard.addAuto("Drive 100 Inches", new AutoDriveDistance(this, 100 * Length.in));
+		NarwhalDashboard.addAuto("Drive 100 Inches", new AutoDriveDistance(this, 100 * Length.in));
 //		NarwhalDashboard.addAuto("Drive 125 Inches", new AutoDriveDistance(this, 125 * Length.in));
 //		
 //		NarwhalDashboard.addAuto("Test Smooth", new AutoTestSmooth(this));
 //		NarwhalDashboard.addAuto("Test Not Smooth", new AutoTestNotSmooth(this));
-//		
+//
 		NarwhalDashboard.addAuto("Arc Turn Forwards", new AutoArcTurn(this, 90 * Angle.DEGREES, Direction.RIGHT));
 		NarwhalDashboard.addAuto("Arc Turn Backwards", new AutoArcTurn(this, -90 * Angle.DEGREES, Direction.LEFT));
 //		
