@@ -1,5 +1,106 @@
 package org.team3128.guido.main;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import org.team3128.common.NarwhalRobot;
+import org.team3128.common.drive.SRXTankDrive;
+import org.team3128.common.listener.ListenerManager;
+import org.team3128.common.listener.controllers.ControllerExtreme3D;
+import org.team3128.common.util.units.Length;
+
+import edu.wpi.first.wpilibj.Joystick;
+
+import org.team3128.common.NarwhalRobot;
+import org.team3128.common.drive.SRXTankDrive;
+import org.team3128.common.hardware.misc.Piston;
+import org.team3128.common.hardware.misc.TwoSpeedGearshift;
+import org.team3128.common.listener.ListenerManager;
+import org.team3128.common.listener.POVValue;
+import org.team3128.common.listener.controllers.ControllerExtreme3D;
+import org.team3128.common.listener.controltypes.Button;
+import org.team3128.common.listener.controltypes.POV;
+import org.team3128.common.narwhaldashboard.NarwhalDashboard;
+import org.team3128.common.util.Constants;
+import org.team3128.common.util.Log;
+import org.team3128.common.util.enums.Direction;
+import org.team3128.common.util.units.Angle;
+import org.team3128.common.util.units.Length;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.SampleRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import org.team3128.common.NarwhalRobot;
+import org.team3128.common.drive.SRXTankDrive;
+import org.team3128.common.listener.ListenerManager;
+import org.team3128.common.listener.controllers.ControllerExtreme3D;
+import org.team3128.common.util.units.Length;
+
+import edu.wpi.first.wpilibj.Joystick;
+
+import org.team3128.common.NarwhalRobot;
+import org.team3128.common.drive.SRXTankDrive;
+import org.team3128.common.hardware.misc.Piston;
+import org.team3128.common.hardware.misc.TwoSpeedGearshift;
+import org.team3128.common.listener.ListenerManager;
+import org.team3128.common.listener.POVValue;
+import org.team3128.common.listener.controllers.ControllerExtreme3D;
+import org.team3128.common.listener.controltypes.Button;
+import org.team3128.common.listener.controltypes.POV;
+import org.team3128.common.narwhaldashboard.NarwhalDashboard;
+import org.team3128.common.util.Constants;
+import org.team3128.common.util.Log;
+import org.team3128.common.util.enums.Direction;
+import org.team3128.common.util.units.Angle;
+import org.team3128.common.util.units.Length;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import org.team3128.guido.autonomous.AutoSideSwitchOrScale;
 import org.team3128.guido.autonomous.AutoCrossBaseline;
 import org.team3128.guido.autonomous.AutoScaleFromSide;
@@ -8,6 +109,7 @@ import org.team3128.guido.autonomous.AutoSwitchFromCenter;
 import org.team3128.guido.autonomous.AutoSwitchFromSide;
 import org.team3128.guido.autonomous.AutoTwoScaleFromSide;
 import org.team3128.guido.autonomous.AutoTwoSwitchFromCenter;
+import org.team3128.guido.autonomous.AutoTyler;
 import org.team3128.guido.autonomous.debug.AutoArcTurn;
 import org.team3128.guido.autonomous.debug.AutoDriveDistance;
 import org.team3128.guido.mechanisms.Forklift;
@@ -50,14 +152,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class MainGuido extends NarwhalRobot
 {
-	public double auto_delay;
+	public double auto_delay = 0;
 	
 	// Drive Train
 	public double wheelCirc;
 	public SRXTankDrive drive;
 	public TalonSRX leftDriveLeader, leftDriveFollower;
 	public TalonSRX rightDriveLeader, rightDriveFollower;
-	
+	AHRS ahrs;
 	public ADXRS450_Gyro gyro;
 
 	public TwoSpeedGearshift gearshift;
@@ -181,7 +283,7 @@ public class MainGuido extends NarwhalRobot
 
 		speedMult = wheelCirc / 409.6 / 100.0;
 		
-		SmartDashboard.putNumber("Autonomous Delay", auto_delay);
+		//SmartDashboard.putNumber("Autonomous Delay", auto_delay);
 
 		NarwhalDashboard.addButton("rezero", (boolean down) -> {
 			if (down) {
@@ -362,12 +464,12 @@ public class MainGuido extends NarwhalRobot
 		PlateAllocation.update();
 		
 		// Oh boy
-		auto_delay = SmartDashboard.getNumber("Autonomous Delay", 0);
-		SmartDashboard.putNumber("Autonomous Delay", auto_delay);
+		//auto_delay = SmartDashboard.getNumber("Autonomous Delay", 0);
+		//SmartDashboard.putNumber("Autonomous Delay", auto_delay);
 		
 //		Debug
 //		
-//		NarwhalDashboard.addAuto("Drive 50 Inches", new AutoDriveDistance(this, 50 * Length.in));
+//		NarwhalDashboard.addAuto("Drive 50 Inches", new AutoDriv`eDistance(this, 50 * Length.in));
 //		NarwhalDashboard.addAuto("Drive 75 Inches", new AutoDriveDistance(this, 75 * Length.in));
 //		NarwhalDashboard.addAuto("Drive 100 Inches", new AutoDriveDistance(this, 100 * Length.in));
 //		NarwhalDashboard.addAuto("Drive 125 Inches", new AutoDriveDistance(this, 125 * Length.in));
@@ -381,12 +483,12 @@ public class MainGuido extends NarwhalRobot
 //		NarwhalDashboard.addAuto("Forklift Set Scale", new AutoSetForkliftState(this, ForkliftState.SCALE));
 //		NarwhalDashboard.addAuto("Forklift Set Switch", new AutoSetForkliftState(this, ForkliftState.SWITCH));
 //		NarwhalDashboard.addAuto("Forklift Set Floor", new AutoSetForkliftState(this, ForkliftState.GROUND));
-		
+		auto_delay = 0;
 		NarwhalDashboard.addAuto("Cross Auto Line", new AutoCrossBaseline(auto_delay));
 		
 		NarwhalDashboard.addAuto("Center Switch", new AutoSwitchFromCenter(auto_delay));
-		NarwhalDashboard.addAuto("Center Switch x2", new AutoTwoSwitchFromCenter(auto_delay));
-		
+		NarwhalDashboard.addAuto("Center Switch x2", new AutoTwoSwitchFromCenter(0));
+		NarwhalDashboard.addAuto("Tyler's Auto", new AutoTyler(0));
 		NarwhalDashboard.addAuto("Right Switch or Scale", new AutoSideSwitchOrScale(Direction.RIGHT, auto_delay));
 		
 		NarwhalDashboard.addAuto("Left Switch", new AutoSwitchFromSide(Direction.LEFT, auto_delay));
@@ -401,7 +503,7 @@ public class MainGuido extends NarwhalRobot
 	@Override
 	protected void teleopInit()
 	{
-		forklift.disabled = false;
+		/*forklift.disabled = false;
 
 		intakeState = IntakeState.STOPPED;
 
@@ -421,12 +523,19 @@ public class MainGuido extends NarwhalRobot
 
 		}
 
-		startTimeMillis = System.currentTimeMillis();
+		startTimeMillis = System.currentTimeMillis();*/
 	}
 
 	@Override
 	protected void teleopPeriodic()
 	{
+		Float ThetaThreshold = (float)25;     
+    Float Theta=ahrs.getPitch();
+    //Float Theta=ahrs.getRoll();
+        if(Theta>ThetaThreshold){
+            leftDriveLeader.set(ControlMode.PercentOutput,Theta);
+            rightDriveLeader.set(ControlMode.PercentOutput,Theta);
+        }
 		// Log.info("MainGuido", ((System.currentTimeMillis() - startTimeMillis)
 		// / 1000.0) + "," + (wheelCirc *
 		// rightDriveLeader.getSelectedSensorVelocity(0) * 10.0 / 4096.0));
