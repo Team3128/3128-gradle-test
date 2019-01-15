@@ -539,7 +539,7 @@ public class MainGuido extends NarwhalRobot
 		// Log.info("MainGuido", ((System.currentTimeMillis() - startTimeMillis)
 		// / 1000.0) + "," + (wheelCirc *
 		// rightDriveLeader.getSelectedSensorVelocity(0) * 10.0 / 4096.0));
-		
+		//a
 		//drive.autoshift();
 	}
 
