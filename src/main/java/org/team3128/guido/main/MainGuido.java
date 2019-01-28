@@ -1,6 +1,36 @@
 package org.team3128.guido.main;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import com.kauailabs.navx.frc.AHRS;
+
+
+import edu.wpi.first.wpilibj.SPI;
+import org.team3128.common.NarwhalRobot;
+//import org.team3128.prebot.autonomous.*;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import org.team3128.common.drive.SRXTankDrive;
+import org.team3128.common.util.Constants;
+import org.team3128.common.util.units.Length;
+import org.team3128.common.util.Log;
+import org.team3128.common.util.RobotMath;
+import org.team3128.common.listener.ListenerManager;
+import org.team3128.common.narwhaldashboard.NarwhalDashboard;
+import org.team3128.common.listener.controllers.ControllerExtreme3D;
+import org.team3128.common.listener.controltypes.Button;
+
+
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import org.team3128.common.NarwhalRobot;
 import org.team3128.common.drive.SRXTankDrive;
 import org.team3128.common.listener.ListenerManager;
@@ -109,7 +139,7 @@ import org.team3128.guido.autonomous.AutoSwitchFromCenter;
 import org.team3128.guido.autonomous.AutoSwitchFromSide;
 import org.team3128.guido.autonomous.AutoTwoScaleFromSide;
 import org.team3128.guido.autonomous.AutoTwoSwitchFromCenter;
-import org.team3128.guido.autonomous.AutoTyler;
+//import org.team3128.guido.autonomous.AutoTyler;
 import org.team3128.guido.autonomous.debug.AutoArcTurn;
 import org.team3128.guido.autonomous.debug.AutoDriveDistance;
 import org.team3128.guido.mechanisms.Forklift;
@@ -488,7 +518,7 @@ public class MainGuido extends NarwhalRobot
 		
 		NarwhalDashboard.addAuto("Center Switch", new AutoSwitchFromCenter(auto_delay));
 		NarwhalDashboard.addAuto("Center Switch x2", new AutoTwoSwitchFromCenter(0));
-		NarwhalDashboard.addAuto("Tyler's Auto", new AutoTyler(0));
+		//NarwhalDashboard.addAuto("Tyler's Auto", new AutoTyler(0));
 		NarwhalDashboard.addAuto("Right Switch or Scale", new AutoSideSwitchOrScale(Direction.RIGHT, auto_delay));
 		
 		NarwhalDashboard.addAuto("Left Switch", new AutoSwitchFromSide(Direction.LEFT, auto_delay));
@@ -529,7 +559,27 @@ public class MainGuido extends NarwhalRobot
 	@Override
 	protected void teleopPeriodic()
 	{
-		Float ThetaThreshold = (float)25;     
+		Double yaw=ahrs.getAngle();
+        Float pitchThreshold = (float)10;     
+        Float pitch=ahrs.getPitch();
+        Float roll=ahrs.getRoll();
+        Float rollThreshold=(float)2;
+        Log.debug("pitch", Float.toString(pitch));
+        Log.debug("roll", Float.toString(roll));
+        if (roll>rollThreshold){
+            leftDriveLeader.set(ControlMode.PercentOutput, (0.2));
+			rightDriveLeader.set(ControlMode.PercentOutput, (0.2));
+		}
+		if (roll < -rollThreshold) {
+			leftDriveLeader.set(ControlMode.PercentOutput, (-0.2));
+			rightDriveLeader.set(ControlMode.PercentOutput, (-0.2));
+		}
+		if (roll < rollThreshold && roll > -rollThreshold) {
+			leftDriveLeader.set(ControlMode.PercentOutput, (0));
+			rightDriveLeader.set(ControlMode.PercentOutput, (0));
+        }
+            
+		/*Float ThetaThreshold = (float)25;     
     Float Theta=ahrs.getPitch();
     //Float Theta=ahrs.getRoll();
         if(Theta>ThetaThreshold){
@@ -539,8 +589,8 @@ public class MainGuido extends NarwhalRobot
 		// Log.info("MainGuido", ((System.currentTimeMillis() - startTimeMillis)
 		// / 1000.0) + "," + (wheelCirc *
 		// rightDriveLeader.getSelectedSensorVelocity(0) * 10.0 / 4096.0));
-		//a
-		//drive.autoshift();
+		//axzsdc\
+		//drive.autoshift();*/
 	}
 
 	@Override

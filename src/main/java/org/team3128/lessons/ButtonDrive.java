@@ -1,5 +1,6 @@
 package org.team3128.lessons;
-
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -26,11 +27,11 @@ public class ButtonDrive extends NarwhalRobot {
    TalonSRX right2;
    TalonSRX left1;
    TalonSRX left2;
-
+   AHRS ahrs;
    //type of drive train we have used for the past few years
    public SRXTankDrive drive;
    double wheelCirc = 0.0*Length.in;
-   double gearRatio = 0.0;
+   double gearRatio = 1.0;
    double wheelBase = 0.0*Length.in;
    double track = 0.0*Length.in;
    int robotFreeSpeed = 0; //native units per 100ms, a native unit is 1/4096 of a rotation
@@ -41,9 +42,10 @@ public class ButtonDrive extends NarwhalRobot {
    //what we control the robot with
     public Joystick joystick;
 
-
+ 
    @Override
    protected void constructHardware() {
+   /*   
        //this is how you print something to the console on the Driver Station
        Log.info("robot", "constructing harware for the robot!");
 
@@ -65,7 +67,6 @@ public class ButtonDrive extends NarwhalRobot {
        //set motor to a velocity of 1 cm / 100 ms
 
 //victor2.set(ControlMode.Velocity, 1*Length.cm);
-
        //initialization of two TalonSRX motor controllers
        right1 = new TalonSRX(11);
        //right2 = new TalonSRX(3);
@@ -128,7 +129,22 @@ lm.addButtonUpListener("LeftMotor", () ->
    @Override
    protected void teleopInit() {
    }
-
+  /* @Override
+	protected void teleopPeriodic()
+	{
+		Float ThetaThreshold = (float)25;     
+    Float Theta=ahrs.getPitch();
+    //Float Theta=ahrs.getRoll();
+        if(Theta>ThetaThreshold){
+            left1.set(ControlMode.PercentOutput,Theta);
+            right1.set(ControlMode.PercentOutput,Theta);
+        }
+		// Log.info("MainGuido", ((System.currentTimeMillis() - startTimeMillis)
+		// / 1000.0) + "," + (wheelCirc *
+		// rightDriveLeader.getSelectedSensorVelocity(0) * 10.0 / 4096.0));
+		//axzsdc\
+		//drive.autoshift();
+	}*/
    @Override
    protected void autonomousInit() {
    }
