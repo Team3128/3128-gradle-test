@@ -577,7 +577,8 @@ public class MainGuido extends NarwhalRobot
          roll=ahrs.getRoll();
          rollThreshold=(float)2;
         Log.debug("pitch", Float.toString(pitch));
-        Log.debug("roll", Float.toString(roll));
+		Log.debug("roll", Float.toString(roll));
+		while(roll>rollThreshold && roll < -rollThreshold){
         if (roll>rollThreshold){
             leftDriveLeader.set(ControlMode.PercentOutput, (0.2));
 			rightDriveLeader.set(ControlMode.PercentOutput, (0.2));
@@ -586,10 +587,12 @@ public class MainGuido extends NarwhalRobot
 			leftDriveLeader.set(ControlMode.PercentOutput, (-0.2));
 			rightDriveLeader.set(ControlMode.PercentOutput, (-0.2));
 		}
+	}
 		if (roll<rollThreshold && roll > -rollThreshold) {
 			leftDriveLeader.set(ControlMode.PercentOutput, (0));
 			rightDriveLeader.set(ControlMode.PercentOutput, (0));
-        }
+		}
+	
             
 		/*Float ThetaThreshold = (float)25;     
     Float Theta=ahrs.getPitch();
