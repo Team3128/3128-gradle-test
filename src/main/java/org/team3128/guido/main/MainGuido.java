@@ -182,6 +182,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class MainGuido extends NarwhalRobot
 {
+	//public AHRS ahrs;
 	public double auto_delay = 0;
 	
 	// Drive Train
@@ -196,7 +197,11 @@ public class MainGuido extends NarwhalRobot
 	public Piston gearshiftPiston, climberPiston, climberLockPiston;
 	
 	public double shiftUpSpeed, shiftDownSpeed;
-
+	public Double yaw=ahrs.getAngle();
+    public Float pitchThreshold;   
+    public Float pitch;
+	public Float roll;
+    public Float rollThreshold;
 	public int lowGearMaxSpeed;
 
 	// Pneumatics
@@ -244,6 +249,12 @@ public class MainGuido extends NarwhalRobot
 	@Override
 	protected void constructHardware()
 	{
+		ahrs = new AHRS(SPI.Port.kMXP); 
+		 yaw=ahrs.getAngle();
+         pitchThreshold = (float)10;     
+         pitch=ahrs.getPitch();
+         roll=ahrs.getRoll();
+         rollThreshold=(float)2;
 		// Drive Train Setup
 		leftDriveLeader = new TalonSRX(20);
 		leftDriveFollower = new TalonSRX(21);
@@ -533,6 +544,7 @@ public class MainGuido extends NarwhalRobot
 	@Override
 	protected void teleopInit()
 	{
+		ahrs.reset();
 		/*forklift.disabled = false;
 
 		intakeState = IntakeState.STOPPED;
@@ -559,22 +571,22 @@ public class MainGuido extends NarwhalRobot
 	@Override
 	protected void teleopPeriodic()
 	{
-		Double yaw=ahrs.getAngle();
-        Float pitchThreshold = (float)10;     
-        Float pitch=ahrs.getPitch();
-        Float roll=ahrs.getRoll();
-        Float rollThreshold=(float)2;
+		 yaw=ahrs.getAngle();
+         pitchThreshold = (float)10;     
+         pitch=ahrs.getPitch();
+         roll=ahrs.getRoll();
+         rollThreshold=(float)2;
         Log.debug("pitch", Float.toString(pitch));
         Log.debug("roll", Float.toString(roll));
         if (roll>rollThreshold){
             leftDriveLeader.set(ControlMode.PercentOutput, (0.2));
 			rightDriveLeader.set(ControlMode.PercentOutput, (0.2));
 		}
-		if (roll < -rollThreshold) {
+		if (roll<-rollThreshold) {
 			leftDriveLeader.set(ControlMode.PercentOutput, (-0.2));
 			rightDriveLeader.set(ControlMode.PercentOutput, (-0.2));
 		}
-		if (roll < rollThreshold && roll > -rollThreshold) {
+		if (roll<rollThreshold && roll > -rollThreshold) {
 			leftDriveLeader.set(ControlMode.PercentOutput, (0));
 			rightDriveLeader.set(ControlMode.PercentOutput, (0));
         }
